@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Виртуальная химическая лаборатория</title>
+    <script type="module" crossorigin src="/assets/index-Dxj_-4Nu.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DSyxoIr0.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <canvas id="lab-canvas" width="1600" height="1000" aria-hidden="true"></canvas>
+      <main class="lab-stage">
+        <header class="hero-panel">
+          <div>
+            <p class="eyebrow">Виртуальная лаборатория</p>
+            <h1>Смешивание растворов и наблюдение признаков реакций</h1>
+          </div>
+          <div class="hero-actions">
+            <button id="reset-all-btn" class="secondary-button">Очистить все пробирки</button>
+          </div>
+        </header>
+
+        <section class="workspace">
+          <aside class="reagent-panel">
+            <div class="panel-header">
+              <h2>Стаканы с реагентами</h2>
+              <p>Перетаскивайте стакан в пробирку или выберите стакан кликом и затем кликните по пробирке.</p>
+            </div>
+            <div id="reagent-grid" class="reagent-grid" aria-label="Набор реагентов"></div>
+          </aside>
+
+          <section class="experiment-panel">
+            <div class="panel-header">
+              <h2>Пробирки</h2>
+              <p>Реакции сопровождаются изменением цвета, осадком, пузырьками газа и тепловыми эффектами.</p>
+            </div>
+            <div id="tube-rack" class="tube-rack" aria-label="Штатив с пробирками"></div>
+          </section>
+        </section>
+
+        <section class="status-strip">
+          <div class="status-card">
+            <p class="status-title">Выбранный реагент</p>
+            <p id="selected-reagent" class="status-value">Ничего не выбрано</p>
+          </div>
+          <div class="status-card status-feed-card">
+            <p class="status-title">Журнал наблюдений</p>
+            <div id="event-feed" class="event-feed"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+  </body>
+</html>

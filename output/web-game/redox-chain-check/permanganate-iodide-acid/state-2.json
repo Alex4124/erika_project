@@ -1,0 +1,61 @@
+{
+  "mode": "virtual-chemistry-lab",
+  "coordinateSystem": {
+    "origin": "top-left",
+    "xDirection": "right",
+    "yDirection": "down"
+  },
+  "selectedReagent": null,
+  "tubes": [
+    {
+      "id": "tube-1",
+      "label": "Пробирка 1",
+      "volumeUnits": 3,
+      "pHCategory": "acidic",
+      "contents": [
+        "Перманганат калия",
+        "Иодид калия",
+        "Серная кислота"
+      ],
+      "reactions": [
+        {
+          "key": "permanganate-iodide-acid",
+          "label": "Окисление иодида перманганатом в кислой среде",
+          "speed": "fast"
+        }
+      ],
+      "activeEffects": [],
+      "note": "Фиолетовый перманганат быстро обесцвечивается, раствор буреет из-за выделения йода."
+    },
+    {
+      "id": "tube-2",
+      "label": "Пробирка 2",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-3",
+      "label": "Пробирка 3",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-4",
+      "label": "Пробирка 4",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    }
+  ]
+}

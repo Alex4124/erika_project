@@ -1,0 +1,60 @@
+{
+  "mode": "virtual-chemistry-lab",
+  "coordinateSystem": {
+    "origin": "top-left",
+    "xDirection": "right",
+    "yDirection": "down"
+  },
+  "selectedReagent": null,
+  "tubes": [
+    {
+      "id": "tube-1",
+      "label": "Пробирка 1",
+      "volumeUnits": 2,
+      "pHCategory": "basic",
+      "contents": [
+        "Хлорид бария",
+        "Карбонат лития"
+      ],
+      "reactions": [
+        {
+          "key": "barium-carbonate",
+          "label": "Осаждение карбоната бария",
+          "speed": "fast"
+        }
+      ],
+      "activeEffects": [],
+      "note": "Выпадает плотный белый осадок BaCO₃."
+    },
+    {
+      "id": "tube-2",
+      "label": "Пробирка 2",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-3",
+      "label": "Пробирка 3",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-4",
+      "label": "Пробирка 4",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    }
+  ]
+}

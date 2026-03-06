@@ -1,0 +1,77 @@
+{
+  "mode": "virtual-chemistry-lab",
+  "coordinateSystem": {
+    "origin": "top-left",
+    "xDirection": "right",
+    "yDirection": "down"
+  },
+  "selectedReagent": null,
+  "tubes": [
+    {
+      "id": "tube-1",
+      "label": "Пробирка 1",
+      "volumeUnits": 3,
+      "pHCategory": "acidic",
+      "contents": [
+        "Нитрат меди",
+        "Силикат калия",
+        "Соляная кислота"
+      ],
+      "reactions": [
+        {
+          "key": "acid-base-neutralization",
+          "label": "Нейтрализация",
+          "speed": "fast"
+        },
+        {
+          "key": "acid-decomposes-copper-silicate",
+          "label": "Разложение силиката меди кислотой",
+          "speed": "medium"
+        },
+        {
+          "key": "acid-silicate",
+          "label": "Образование кремниевой кислоты",
+          "speed": "slow"
+        }
+      ],
+      "activeEffects": [
+        "heat",
+        "dissolve",
+        "color-wave",
+        "precipitation",
+        "color-wave"
+      ],
+      "note": "Идёт быстрая нейтрализация, смесь ощутимо нагревается. Голубовато-зелёный осадок силиката меди разрушается кислотой, раствор синеет, остаётся гель кремниевой кислоты. Раствор постепенно желируется, появляется бесцветный студенистый осадок."
+    },
+    {
+      "id": "tube-2",
+      "label": "Пробирка 2",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-3",
+      "label": "Пробирка 3",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-4",
+      "label": "Пробирка 4",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    }
+  ]
+}

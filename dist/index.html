@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Виртуальная химическая лаборатория</title>
-    <script type="module" crossorigin src="/assets/index-Dxj_-4Nu.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DSyxoIr0.css">
+    <script type="module" crossorigin src="/assets/index-DFUn-m-c.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-LmQDcRka.css">
   </head>
   <body>
     <div class="app-shell">
@@ -44,12 +44,72 @@
             <p class="status-title">Выбранный реагент</p>
             <p id="selected-reagent" class="status-value">Ничего не выбрано</p>
           </div>
-          <div class="status-card status-feed-card">
-            <p class="status-title">Журнал наблюдений</p>
-            <div id="event-feed" class="event-feed"></div>
+          <div class="status-card drawer-hint-card">
+            <p class="status-title">Выдвижные вкладки</p>
+            <p class="drawer-hint-copy">Откройте вкладки справа: в них показываются журнал наблюдений и уравнения реакций для каждой пробирки.</p>
           </div>
         </section>
       </main>
+
+      <aside id="slideout-drawer" class="slideout-drawer" aria-label="Выдвижные вкладки">
+        <div class="slideout-tabs" role="tablist" aria-label="Панели лаборатории">
+          <button
+            id="drawer-tab-equations"
+            class="slideout-tab"
+            type="button"
+            data-drawer-tab="equations"
+            role="tab"
+            aria-controls="drawer-panel-equations"
+            aria-selected="false"
+          >
+            Уравнения
+          </button>
+          <button
+            id="drawer-tab-journal"
+            class="slideout-tab"
+            type="button"
+            data-drawer-tab="journal"
+            role="tab"
+            aria-controls="drawer-panel-journal"
+            aria-selected="false"
+          >
+            Журнал
+          </button>
+        </div>
+
+        <div class="slideout-body">
+          <div class="slideout-header">
+            <div class="slideout-heading">
+              <p id="drawer-kicker" class="slideout-kicker">Выдвижная вкладка</p>
+              <h2 id="drawer-title" class="slideout-title">Уравнения реакций</h2>
+            </div>
+            <button id="drawer-close-btn" class="slideout-close" type="button">Свернуть</button>
+          </div>
+
+          <section
+            id="drawer-panel-equations"
+            class="slideout-panel"
+            data-drawer-panel="equations"
+            role="tabpanel"
+            aria-labelledby="drawer-tab-equations"
+          >
+            <p class="slideout-description">Показаны молекулярные и ионные уравнения реакций, которые сейчас определены для каждой пробирки.</p>
+            <div id="equation-feed" class="equation-feed"></div>
+          </section>
+
+          <section
+            id="drawer-panel-journal"
+            class="slideout-panel"
+            data-drawer-panel="journal"
+            role="tabpanel"
+            aria-labelledby="drawer-tab-journal"
+            hidden
+          >
+            <p class="slideout-description">В журнале фиксируются добавление реагентов, появление осадков, изменения цвета и другие наблюдения.</p>
+            <div id="event-feed" class="event-feed event-feed-drawer"></div>
+          </section>
+        </div>
+      </aside>
     </div>
 
   </body>

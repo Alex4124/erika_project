@@ -1,0 +1,74 @@
+{
+  "mode": "virtual-chemistry-lab",
+  "coordinateSystem": {
+    "origin": "top-left",
+    "xDirection": "right",
+    "yDirection": "down"
+  },
+  "selectedReagent": null,
+  "tubes": [
+    {
+      "id": "tube-1",
+      "label": "Пробирка 1",
+      "volumeUnits": 3,
+      "pHCategory": "neutral",
+      "contents": [
+        "Нитрат серебра",
+        "Гидроксид калия",
+        "Соляная кислота"
+      ],
+      "reactions": [
+        {
+          "key": "acid-base-neutralization",
+          "label": "Нейтрализация",
+          "speed": "fast"
+        },
+        {
+          "key": "silver-chloride",
+          "label": "Осаждение хлорида серебра",
+          "speed": "instant"
+        },
+        {
+          "key": "silver-oxide-chloride-transition",
+          "label": "Переход оксида серебра в хлорид",
+          "speed": "fast"
+        }
+      ],
+      "activeEffects": [
+        "heat",
+        "dissolve"
+      ],
+      "note": "Идёт быстрая нейтрализация, смесь ощутимо нагревается. Мгновенно выпадает белый творожистый осадок AgCl. Бурый осадок Ag₂O исчезает в HCl, пробирка быстро заполняется белым AgCl."
+    },
+    {
+      "id": "tube-2",
+      "label": "Пробирка 2",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-3",
+      "label": "Пробирка 3",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    },
+    {
+      "id": "tube-4",
+      "label": "Пробирка 4",
+      "volumeUnits": 0,
+      "pHCategory": "neutral",
+      "contents": [],
+      "reactions": [],
+      "activeEffects": [],
+      "note": "Пробирка пуста."
+    }
+  ]
+}

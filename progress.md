@@ -86,3 +86,15 @@ Original prompt: Сделай виртуальную лабораторию по
   - `npm run build` -> ok;
   - обязательный `skill-client`: `output/web-game/properties-skill-final`;
   - DOM-проверка tooltip, молекулярных уравнений, скролла и скрытия неактивных tabpanel: `output/web-game/properties-dom-verified`.
+
+- Performance pass for canvas/particles:
+  - added `lab-canvas-bg` as a cached background canvas; the visible `lab-canvas` now composites the cached background and redraws only tube dynamics, so the skill-client still captures the correct main canvas;
+  - added `rectCache` with TTL for panel/reagent/tube geometry and cached tube subnode refs to cut repeated DOM queries/layout reads;
+  - added memoization in `seededUnit()` and dirty flags for tubes/background so static frames skip unnecessary DOM tube rerenders and canvas redraws;
+  - replaced per-frame DOM recreation in `renderBubbles()` / `renderFallout()` with fixed pools (`32` bubbles, `64` fallout particles).
+- Verification after performance pass:
+  - `node --check app.js` -> ok;
+  - `npm run build` -> ok;
+  - required skill-client smoke run: `output/web-game/perf-optimization-skill`;
+  - DOM/browser checks via Playwright debug API: `output/web-game/perf-optimization-dom/report.json`, `output/web-game/perf-optimization-dom-precip/report.json`;
+  - observed in reports: largest canvas remains `lab-canvas`, gas bubble pool stays fixed at `32`, fallout pool stays fixed at `64`, reactions still resolve for `AgNO3 + KI` and `HCl + Li2CO3`, console errors absent.

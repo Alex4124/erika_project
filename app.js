@@ -465,11 +465,11 @@ const MAX_NOTIFICATIONS = 18;
 const FULLSCREEN_KEY = "f";
 const DRAWER_META = {
   equations: {
-    kicker: "Выдвижная вкладка",
+    kicker: "",
     title: "Уравнения реакций"
   },
   journal: {
-    kicker: "Выдвижная вкладка",
+    kicker: "",
     title: "Журнал наблюдений"
   }
 };
@@ -623,7 +623,7 @@ const REACTION_RULES = [
     label: "Нейтрализация",
     speed: "fast",
     note: "Идёт быстрая нейтрализация, смесь ощутимо нагревается.",
-    predicate: ({ ids }) => hasAcid(ids) && hasBase(ids),
+    predicate: ({ ids }) => hasAcid(ids) && hasAny(ids, ["koh", "ca_oh_2"]),
     animation: [
       { type: "flash", durationMs: 520, peak: 0.36 },
       { type: "heat", durationMs: 1500, peak: 0.66 }
@@ -1726,11 +1726,13 @@ const REACTION_MOLECULAR_EQUATIONS = {
     "HNO₃ + KOH → KNO₃ + H₂O",
     "H₂SO₄ + 2KOH → K₂SO₄ + 2H₂O",
     "2HCl + Ca(OH)₂ → CaCl₂ + 2H₂O",
-    "2HNO₃ + Ca(OH)₂ → Ca(NO₃)₂ + 2H₂O"
+    "2HNO₃ + Ca(OH)₂ → Ca(NO₃)₂ + 2H₂O",
+    "H₂SO₄ + Ca(OH)₂ → CaSO₄↓ + 2H₂O"
   ],
   "silver-chloride": [
     "AgNO₃ + HCl → AgCl↓ + HNO₃",
     "2AgNO₃ + BaCl₂ → 2AgCl↓ + Ba(NO₃)₂",
+    "3AgNO₃ + FeCl₃ → 3AgCl↓ + Fe(NO₃)₃",
     "3AgNO₃ + AlCl₃ → 3AgCl↓ + Al(NO₃)₃",
     "AgNO₃ + NH₄Cl → AgCl↓ + NH₄NO₃"
   ],
@@ -2042,10 +2044,10 @@ function buildReagentCards() {
       ${getReagentTooltipMarkup(reagent, tooltipId)}
     `;
     applyLiquidStyle(card.querySelector(".liquid-fill"), reagent);
-    card.addEventListener("pointerenter", () => card.classList.add("is-peeking"));
-    card.addEventListener("pointerleave", () => card.classList.remove("is-peeking"));
-    card.addEventListener("focusin", () => card.classList.add("is-peeking"));
-    card.addEventListener("focusout", () => card.classList.remove("is-peeking"));
+    card.addEventListener("pointerenter", () => showReagentTooltip(card));
+    card.addEventListener("pointerleave", () => hideReagentTooltip(card));
+    card.addEventListener("focusin", () => showReagentTooltip(card));
+    card.addEventListener("focusout", () => hideReagentTooltip(card));
     card.addEventListener("pointerdown", onReagentPointerDown);
     reagentGrid.append(card);
     reagentElements.set(reagent.id, card);
@@ -2111,14 +2113,14 @@ function buildTubeRack() {
 
 function applyLiquidStyle(element, reagent) {
   const vividColor = amplifyColor(reagent.color, 0.16, 0.08);
-  element.style.setProperty("--liquid-color", rgba(vividColor, reagent.alpha));
+  element.style.setProperty("--liquid-color", rgba(vividColor, clamp(reagent.alpha * 0.72, 0.14, 0.62)));
   element.style.setProperty("--particle-color", rgba(mixColors([
     { color: vividColor, weight: 1 },
     { color: [255, 255, 255], weight: 0.35 }
-  ]), 0.3));
+  ]), 0.22));
   element.style.setProperty("--clarity", reagent.clarity.toFixed(2));
-  element.style.setProperty("--texture-opacity", reagent.textureOpacity.toFixed(2));
-  element.style.setProperty("--sediment-opacity", reagent.sedimentOpacity.toFixed(2));
+  element.style.setProperty("--texture-opacity", (reagent.textureOpacity * 0.72).toFixed(2));
+  element.style.setProperty("--sediment-opacity", (reagent.sedimentOpacity * 0.72).toFixed(2));
 }
 
 function getReagentTooltipMarkup(reagent, tooltipId) {
@@ -2149,6 +2151,47 @@ function getReagentTooltipMarkup(reagent, tooltipId) {
       </dl>
     </div>
   `;
+}
+
+function showReagentTooltip(card) {
+  positionReagentTooltip(card);
+  card.classList.add("is-peeking");
+}
+
+function hideReagentTooltip(card) {
+  card.classList.remove("is-peeking");
+}
+
+function positionReagentTooltip(card) {
+  const tooltip = card.querySelector(".reagent-tooltip");
+  if (!tooltip) {
+    return;
+  }
+  const rect = card.getBoundingClientRect();
+  const tooltipWidth = tooltip.offsetWidth || 280;
+  const tooltipHeight = tooltip.offsetHeight || 170;
+  const gap = 14;
+  const spaces = {
+    top: rect.top,
+    right: window.innerWidth - rect.right,
+    bottom: window.innerHeight - rect.bottom,
+    left: rect.left
+  };
+
+  let placement = "bottom";
+  if (spaces.bottom >= tooltipHeight + gap) {
+    placement = "bottom";
+  } else if (spaces.top >= tooltipHeight + gap) {
+    placement = "top";
+  } else if (spaces.right >= tooltipWidth + gap) {
+    placement = "right";
+  } else if (spaces.left >= tooltipWidth + gap) {
+    placement = "left";
+  } else {
+    placement = spaces.bottom >= spaces.top ? "bottom" : "top";
+  }
+
+  card.dataset.tooltipPlacement = placement;
 }
 
 function toggleSelectedReagent(reagentId) {
@@ -2188,6 +2231,7 @@ function renderDrawer() {
   slideoutDrawer.classList.toggle("is-open", state.drawer.open);
   slideoutDrawer.dataset.panel = state.drawer.panel;
   drawerKicker.textContent = meta.kicker;
+  drawerKicker.hidden = !meta.kicker;
   drawerTitle.textContent = meta.title;
   drawerTabs.forEach((tab) => {
     const isActive = tab.dataset.drawerTab === state.drawer.panel;
@@ -2493,20 +2537,21 @@ function evaluateTube(tube) {
     0.08 + precipitateOpacity * 0.08
   );
   alpha = clamp(alpha + reactions.length * 0.015 + (indicatorTint ? 0.02 : 0), 0.28, 0.98);
+  const renderedAlpha = clamp(alpha * 0.74, 0.16, 0.76);
 
   tube.analysis = {
     pHCategory,
     acidityScore,
-    displayColor: rgba(mixedColor, alpha),
+    displayColor: rgba(mixedColor, renderedAlpha),
     overlayColor: rgba(overlayColor, overlayOpacity),
     overlayOpacity,
     gelOpacity,
     precipitateColor: rgba(precipitateColor, precipitateOpacity),
     precipitateHeight,
     precipitateOpacity,
-    liquidOpacity: alpha,
-    textureOpacity,
-    sedimentOpacity,
+    liquidOpacity: renderedAlpha,
+    textureOpacity: clamp(textureOpacity * 0.76, 0, 0.24),
+    sedimentOpacity: clamp(sedimentOpacity * 0.76, 0, 0.24),
     clarity,
     reactions,
     notes: reactions.map((reaction) => reaction.note),
@@ -3568,32 +3613,167 @@ function trimCanvasText(text, maxWidth) {
 
 function getTubeEquationEntries(tube) {
   const ids = new Set(tube.contents.map((entry) => entry.reagentId));
-  const reactionKeys = new Set(tube.analysis.reactions.map((reaction) => reaction.key));
   return tube.analysis.reactions
-    .filter((reaction) => shouldShowReactionEquation(reaction, ids, reactionKeys))
+    .filter((reaction) => shouldShowReactionEquation(reaction, ids))
     .map((reaction) => ({
       key: reaction.key,
       label: reaction.label,
-      equations: getReactionEquations(reaction.key)
+      equations: getReactionEquations(reaction.key, ids)
     }))
     .filter((entry) => hasEquationContent(entry.equations));
 }
 
-function shouldShowReactionEquation(reaction, ids, reactionKeys) {
-  if (reaction.key !== "acid-base-neutralization") {
-    return true;
-  }
-  if (!hasAny(ids, ["koh", "ca_oh_2"])) {
-    return false;
-  }
-  return reactionKeys.size === 1 || ids.has("koh");
+function shouldShowReactionEquation() {
+  return true;
 }
 
-function getReactionEquations(key) {
+function getReactionEquations(key, ids) {
   return {
-    molecular: REACTION_MOLECULAR_EQUATIONS[key] ?? [],
+    molecular: getRelevantMolecularEquations(key, ids),
     ionic: REACTION_EQUATIONS[key] ?? []
   };
+}
+
+function getRelevantMolecularEquations(key, ids) {
+  const lines = REACTION_MOLECULAR_EQUATIONS[key] ?? [];
+  if (!lines.length) {
+    return [];
+  }
+
+  switch (key) {
+    case "acid-base-neutralization":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["hcl", "koh"] },
+        { index: 1, requires: ["hno3", "koh"] },
+        { index: 2, requires: ["h2so4", "koh"] },
+        { index: 3, requires: ["hcl", "ca_oh_2"] },
+        { index: 4, requires: ["hno3", "ca_oh_2"] },
+        { index: 5, requires: ["h2so4", "ca_oh_2"] }
+      ], ids);
+    case "silver-chloride":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["agno3", "hcl"] },
+        { index: 1, requires: ["agno3", "bacl2"] },
+        { index: 2, requires: ["agno3", "fecl3"] },
+        { index: 3, requires: ["agno3", "alcl3"] },
+        { index: 4, requires: ["agno3", "nh4cl"] }
+      ], ids);
+    case "silver-oxide":
+    case "copper-hydroxide":
+    case "iron-hydroxide":
+    case "ammonium-base-reaction":
+    case "aluminum-hydroxide":
+    case "zinc-hydroxide":
+    case "nickel-hydroxide":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: [getPrimaryMetalReagentIdForKey(key), "koh"] },
+        { index: 1, requires: [getPrimaryMetalReagentIdForKey(key), "ca_oh_2"] }
+      ], ids);
+    case "acid-dissolves-silver-oxide":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["h2so4"] },
+        { index: 1, requires: ["hno3"] }
+      ], ids);
+    case "acid-dissolves-silver-phosphate":
+    case "acid-dissolves-silver-carbonate":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["hno3"] },
+        { index: 1, requires: ["h2so4"] }
+      ], ids);
+    case "barium-sulfate":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["bacl2", "h2so4"] },
+        { index: 1, requires: ["bacl2", "znso4"] }
+      ], ids);
+    case "calcium-sulfate":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["ca_oh_2", "h2so4"] },
+        { index: 1, requires: ["ca_no3_2", "h2so4"] },
+        { index: 2, requires: ["ca_oh_2", "znso4"] },
+        { index: 3, requires: ["ca_no3_2", "znso4"] }
+      ], ids);
+    case "acid-dissolves-barium-carbonate":
+    case "acid-dissolves-copper-hydroxide":
+    case "acid-dissolves-copper-phosphate":
+    case "acid-dissolves-copper-carbonate":
+    case "acid-decomposes-copper-silicate":
+    case "acid-dissolves-iron-hydroxide":
+    case "acid-dissolves-calcium-carbonate":
+    case "acid-dissolves-iron-phosphate":
+    case "acid-dissolves-barium-phosphate":
+    case "acid-dissolves-calcium-phosphate":
+    case "acid-decomposes-barium-silicate":
+    case "acid-decomposes-calcium-silicate":
+    case "acid-dissolves-aluminum-hydroxide":
+    case "acid-dissolves-aluminum-phosphate":
+    case "acid-dissolves-zinc-hydroxide":
+    case "acid-dissolves-zinc-phosphate":
+    case "acid-dissolves-zinc-carbonate":
+    case "acid-decomposes-zinc-silicate":
+    case "acid-dissolves-nickel-hydroxide":
+    case "acid-dissolves-nickel-phosphate":
+    case "acid-dissolves-nickel-carbonate":
+    case "acid-decomposes-nickel-silicate":
+    case "acid-carbonate":
+    case "acid-sulfide":
+    case "acid-silicate":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["hcl"] },
+        { index: 1, requires: ["h2so4"] },
+        { index: 2, requires: ["hno3"] }
+      ], ids);
+    case "calcium-carbonate":
+    case "calcium-phosphate":
+    case "calcium-silicate":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["ca_oh_2"] },
+        { index: 1, requires: ["ca_no3_2"] }
+      ], ids);
+    case "aluminum-hydroxide-dissolves-in-alkali":
+    case "zinc-hydroxide-dissolves-in-alkali":
+      return ids.has("koh") ? [lines[0]] : lines.slice(0, 1);
+    case "permanganate-iodide-acid":
+    case "permanganate-peroxide-acid":
+      return selectMolecularEquationVariants(lines, [
+        { index: 0, requires: ["h2so4"] },
+        { index: 1, requires: ["hno3"] }
+      ], ids);
+    default:
+      return lines;
+  }
+}
+
+function selectMolecularEquationVariants(lines, variants, ids) {
+  const selected = variants
+    .filter((variant) => variant.requires.every((requiredId) => ids.has(requiredId)))
+    .map((variant) => lines[variant.index])
+    .filter(Boolean);
+  return selected.length ? selected : lines.slice(0, 1);
+}
+
+function getPrimaryMetalReagentIdForKey(key) {
+  if (key.startsWith("copper-")) {
+    return "cu_no3_2";
+  }
+  if (key.startsWith("iron-")) {
+    return "fecl3";
+  }
+  if (key.startsWith("aluminum-") || key === "acid-dissolves-aluminum-hydroxide" || key === "acid-dissolves-aluminum-phosphate") {
+    return "alcl3";
+  }
+  if (key.startsWith("zinc-") || key === "acid-dissolves-zinc-hydroxide" || key === "acid-dissolves-zinc-phosphate" || key === "acid-dissolves-zinc-carbonate" || key === "acid-decomposes-zinc-silicate") {
+    return "znso4";
+  }
+  if (key.startsWith("nickel-") || key === "acid-dissolves-nickel-hydroxide" || key === "acid-dissolves-nickel-phosphate" || key === "acid-dissolves-nickel-carbonate" || key === "acid-decomposes-nickel-silicate") {
+    return "ni_no3_2";
+  }
+  if (key === "silver-oxide") {
+    return "agno3";
+  }
+  if (key === "ammonium-base-reaction") {
+    return "nh4cl";
+  }
+  return "";
 }
 
 function hasEquationContent(equations) {

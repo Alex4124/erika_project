@@ -555,6 +555,8 @@ const ACIDIC_HYDROLYSIS_RULES = [
 const app = document.querySelector(".app-shell");
 const canvas = document.querySelector("#lab-canvas");
 const ctx = canvas.getContext("2d");
+const backgroundCanvas = document.querySelector("#lab-canvas-bg");
+const backgroundCtx = backgroundCanvas.getContext("2d");
 const reagentGrid = document.querySelector("#reagent-grid");
 const tubeRack = document.querySelector("#tube-rack");
 const selectedReagentLabel = document.querySelector("#selected-reagent");
@@ -567,9 +569,20 @@ const drawerTitle = document.querySelector("#drawer-title");
 const drawerCloseButton = document.querySelector("#drawer-close-btn");
 const drawerTabs = Array.from(document.querySelectorAll("[data-drawer-tab]"));
 const drawerPanels = Array.from(document.querySelectorAll("[data-drawer-panel]"));
+const scenePanels = Array.from(document.querySelectorAll(".hero-panel, .reagent-panel, .experiment-panel, .status-card"));
+const heroPanel = document.querySelector(".hero-panel");
+const reagentPanel = document.querySelector(".reagent-panel");
+const experimentPanel = document.querySelector(".experiment-panel");
 
 const tubeElements = new Map();
+const tubeRenderElements = new Map();
 const reagentElements = new Map();
+const rectCache = new Map();
+const seededCache = new Map();
+
+const RECT_TTL_MS = 200;
+const BUBBLE_POOL_SIZE = 32;
+const FALLOUT_POOL_SIZE = 64;
 
 const state = {
   selectedReagentId: null,
@@ -581,8 +594,69 @@ const state = {
   dragging: null,
   tubes: Array.from({ length: 4 }, (_, index) => createTube(index + 1)),
   clockMs: 0,
-  lastTimestamp: 0
+  lastTimestamp: 0,
+  backgroundDirty: true,
+  sceneDirty: true
 };
+
+function markBackgroundDirty() {
+  state.backgroundDirty = true;
+  state.sceneDirty = true;
+}
+
+function markSceneDirty() {
+  state.sceneDirty = true;
+}
+
+function markTubeDirty(tube) {
+  if (!tube) {
+    return;
+  }
+  tube.dirty = true;
+  markSceneDirty();
+}
+
+function resetGeometryCache() {
+  rectCache.clear();
+  markBackgroundDirty();
+}
+
+function getCachedRect(element, key) {
+  const cached = rectCache.get(key);
+  const now = performance.now();
+  if (cached && now - cached.timestamp < RECT_TTL_MS) {
+    return cached.rect;
+  }
+  const rect = element.getBoundingClientRect();
+  rectCache.set(key, { rect, timestamp: now });
+  return rect;
+}
+
+function ensurePool(container, className, size) {
+  while (container.children.length < size) {
+    const element = document.createElement("span");
+    element.className = className;
+    element.style.display = "none";
+    container.append(element);
+  }
+}
+
+function hidePooledChildren(container, fromIndex = 0) {
+  for (let index = fromIndex; index < container.children.length; index += 1) {
+    container.children[index].style.display = "none";
+  }
+}
+
+function syncCanvasSize(targetCanvas, targetCtx, width, height) {
+  const pixelRatio = window.devicePixelRatio || 1;
+  const pixelWidth = Math.max(1, Math.round(width * pixelRatio));
+  const pixelHeight = Math.max(1, Math.round(height * pixelRatio));
+  if (targetCanvas.width !== pixelWidth || targetCanvas.height !== pixelHeight) {
+    targetCanvas.width = pixelWidth;
+    targetCanvas.height = pixelHeight;
+  }
+  targetCtx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+}
 
 function createTube(number) {
   return {
@@ -592,7 +666,8 @@ function createTube(number) {
     triggeredReactionKeys: [],
     activeEffects: [],
     analysis: createEmptyAnalysis(),
-    lastReactionSummary: "Пробирка пуста."
+    lastReactionSummary: "Пробирка пуста.",
+    dirty: true
   };
 }
 
@@ -2021,6 +2096,7 @@ function init() {
 
 function buildReagentCards() {
   reagentGrid.innerHTML = "";
+  reagentElements.clear();
   REAGENTS.forEach((reagent) => {
     const tooltipId = `${reagent.id}-tooltip`;
     const card = document.createElement("article");
@@ -2050,11 +2126,13 @@ function buildReagentCards() {
     reagentGrid.append(card);
     reagentElements.set(reagent.id, card);
   });
+  resetGeometryCache();
 }
 
 function buildTubeRack() {
   tubeRack.innerHTML = "";
   tubeElements.clear();
+  tubeRenderElements.clear();
   state.tubes.forEach((tube) => {
     evaluateTube(tube);
     const card = document.createElement("article");
@@ -2104,8 +2182,30 @@ function buildTubeRack() {
     });
     tubeRack.append(card);
     tubeElements.set(tube.id, card);
+    const renderElements = {
+      card,
+      liquid: card.querySelector(".tube-liquid"),
+      overlay: card.querySelector(".tube-overlay"),
+      gel: card.querySelector(".tube-gel"),
+      precipitate: card.querySelector(".tube-precipitate"),
+      fallout: card.querySelector(".tube-fallout"),
+      dissolve: card.querySelector(".tube-dissolve"),
+      redox: card.querySelector(".tube-redox"),
+      bubbles: card.querySelector(".tube-bubbles"),
+      heat: card.querySelector(".tube-heat"),
+      flash: card.querySelector(".tube-flash"),
+      note: card.querySelector(".tube-note"),
+      contents: card.querySelector(".tube-contents")
+    };
+    ensurePool(renderElements.fallout, "fallout-particle", FALLOUT_POOL_SIZE);
+    ensurePool(renderElements.bubbles, "bubble", BUBBLE_POOL_SIZE);
+    hidePooledChildren(renderElements.fallout);
+    hidePooledChildren(renderElements.bubbles);
+    tubeRenderElements.set(tube.id, renderElements);
     renderTube(tube);
+    tube.dirty = false;
   });
+  resetGeometryCache();
   renderEquationFeed();
 }
 
@@ -2154,6 +2254,7 @@ function getReagentTooltipMarkup(reagent, tooltipId) {
 function toggleSelectedReagent(reagentId) {
   state.selectedReagentId = state.selectedReagentId === reagentId ? null : reagentId;
   updateSelectedReagentLabel();
+  markBackgroundDirty();
 }
 
 function updateSelectedReagentLabel() {
@@ -2314,9 +2415,10 @@ function clearTube(tubeId) {
   tube.activeEffects = [];
   tube.lastReactionSummary = "Пробирка пуста.";
   evaluateTube(tube);
-  renderTube(tube);
+  markTubeDirty(tube);
   renderEquationFeed();
   postEvent(`${tube.label} очищена.`);
+  render();
 }
 
 function addReagentToTube(reagentId, tubeId) {
@@ -2390,8 +2492,9 @@ function addReagentToTube(reagentId, tubeId) {
     postEvent(`${tube.label}: добавлен реагент "${reagent.name}". Видимых изменений почти нет.`);
   }
 
-  renderTube(tube);
+  markTubeDirty(tube);
   renderEquationFeed();
+  render();
 }
 
 function evaluateTube(tube) {
@@ -2599,27 +2702,48 @@ function getIndicatorMessage(reagents, pHCategory) {
 }
 
 function render() {
-  drawCanvasScene();
-  state.tubes.forEach((tube) => renderTube(tube));
+  const shouldDrawScene = state.backgroundDirty
+    || state.sceneDirty
+    || state.tubes.some((tube) => tube.dirty || tube.activeEffects.length > 0);
+
+  if (state.backgroundDirty) {
+    drawCanvasBackground();
+    state.backgroundDirty = false;
+  }
+
+  if (shouldDrawScene) {
+    drawCanvasScene();
+    state.sceneDirty = false;
+  }
+
+  state.tubes.forEach((tube) => {
+    if (tube.dirty || tube.activeEffects.length > 0) {
+      renderTube(tube);
+      tube.dirty = false;
+    }
+  });
 }
 
 function renderTube(tube) {
-  const card = tubeElements.get(tube.id);
-  if (!card) {
+  const renderElements = tubeRenderElements.get(tube.id);
+  if (!renderElements) {
     return;
   }
-  const liquid = card.querySelector(".tube-liquid");
-  const overlay = card.querySelector(".tube-overlay");
-  const gel = card.querySelector(".tube-gel");
-  const precipitate = card.querySelector(".tube-precipitate");
-  const fallout = card.querySelector(".tube-fallout");
-  const dissolve = card.querySelector(".tube-dissolve");
-  const redox = card.querySelector(".tube-redox");
-  const bubbles = card.querySelector(".tube-bubbles");
-  const heat = card.querySelector(".tube-heat");
-  const flash = card.querySelector(".tube-flash");
-  const note = card.querySelector(".tube-note");
-  const contents = card.querySelector(".tube-contents");
+  const {
+    card,
+    liquid,
+    overlay,
+    gel,
+    precipitate,
+    fallout,
+    dissolve,
+    redox,
+    bubbles,
+    heat,
+    flash,
+    note,
+    contents
+  } = renderElements;
   const volumeRatio = tube.contents.length ? clamp(0.14 + tube.contents.length * 0.12, 0.14, 0.86) : 0.02;
   const gasIntensity = clamp(getActiveEffectIntensity(tube, "gas") * 1.36, 0, 1.28);
   const redoxEffect = getDominantEffect(tube, "redox");
@@ -2691,22 +2815,24 @@ function renderTube(tube) {
 }
 
 function renderFallout(tube, container, progress) {
+  ensurePool(container, "fallout-particle", FALLOUT_POOL_SIZE);
   if (progress === null) {
-    container.replaceChildren();
+    hidePooledChildren(container);
     return;
   }
   const intensity = clamp(getActiveEffectIntensity(tube, "precipitation") * 1.42 + tube.analysis.precipitateOpacity * 0.24, 0, 1.28);
   const particleCount = getFalloutParticleCount(intensity);
   const precipColor = amplifyColor(parseColorToRgb(tube.analysis.precipitateColor), 0.12 + intensity * 0.1, 0.08);
   const accentColor = getFalloutAccentColor(precipColor);
-  const fragment = document.createDocumentFragment();
+  let visibleParticles = 0;
   for (let index = 0; index < particleCount; index += 1) {
     const metrics = getFalloutParticleMetrics(tube.id, index, progress, intensity);
     if (!metrics) {
       continue;
     }
-    const fleck = document.createElement("span");
-    fleck.className = "fallout-particle";
+    const fleck = container.children[visibleParticles];
+    visibleParticles += 1;
+    fleck.style.display = "block";
     fleck.style.left = `${metrics.leftPercent}%`;
     fleck.style.top = `${metrics.topPercent}%`;
     fleck.style.width = `${metrics.width}px`;
@@ -2718,13 +2844,12 @@ function renderFallout(tube, container, progress) {
     fleck.style.setProperty("--trail-color", `rgba(${accentColor[0]}, ${accentColor[1]}, ${accentColor[2]}, 0.72)`);
     fleck.style.boxShadow = `0 0 14px rgba(255, 255, 255, 0.22), 0 0 0 1px rgba(${accentColor[0]}, ${accentColor[1]}, ${accentColor[2]}, 0.46), inset 0 0 6px rgba(255, 255, 255, 0.42)`;
     fleck.style.background = `radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.98), rgba(${precipColor[0]}, ${precipColor[1]}, ${precipColor[2]}, 0.96) 44%, rgba(${accentColor[0]}, ${accentColor[1]}, ${accentColor[2]}, 0.78) 76%, rgba(${accentColor[0]}, ${accentColor[1]}, ${accentColor[2]}, 0.22) 100%)`;
-    fragment.append(fleck);
   }
-  container.replaceChildren(fragment);
+  hidePooledChildren(container, visibleParticles);
 }
 
 function renderBubbles(tube, container, intensity) {
-  container.innerHTML = "";
+  ensurePool(container, "bubble", BUBBLE_POOL_SIZE);
   container.style.setProperty(
     "--gas-haze",
     intensity > 0.01
@@ -2732,26 +2857,27 @@ function renderBubbles(tube, container, intensity) {
       : "transparent"
   );
   if (intensity <= 0.01) {
+    hidePooledChildren(container);
     return;
   }
   const bubbleCount = Math.max(7, Math.round(10 + intensity * 14));
   const phase = state.clockMs / 1000;
   for (let index = 0; index < bubbleCount; index += 1) {
     const seed = seededUnit(`${tube.id}-${index}`);
-    const bubble = document.createElement("span");
-    bubble.className = "bubble";
+    const bubble = container.children[index];
     const size = 7 + seed * 12 + intensity * 8;
     const drift = Math.sin(phase * (1.3 + seed * 0.7) + index) * (2 + intensity * 5);
     const left = 8 + seededUnit(`${tube.id}-${index}-x`) * 72 + drift;
     const loop = (phase * (0.54 + seed * 0.52) + seededUnit(`${tube.id}-${index}-loop`)) % 1;
     const bottom = 4 + loop * 94;
+    bubble.style.display = "block";
     bubble.style.width = `${size}px`;
     bubble.style.height = `${size}px`;
     bubble.style.left = `${left}%`;
     bubble.style.bottom = `${bottom}%`;
     bubble.style.opacity = `${0.34 + intensity * 0.58}`;
-    container.append(bubble);
   }
+  hidePooledChildren(container, bubbleCount);
 }
 
 function renderDissolve(tube, container, effect, precipitateVisual, intensity) {
@@ -3061,6 +3187,9 @@ function appendEquationGroup(parent, label, lines) {
 function tick(deltaMs) {
   state.clockMs += deltaMs;
   state.tubes.forEach((tube) => {
+    if (tube.activeEffects.length) {
+      markTubeDirty(tube);
+    }
     tube.activeEffects = tube.activeEffects.filter((effect) => state.clockMs - effect.startedAt <= effect.durationMs);
   });
 }
@@ -3077,7 +3206,8 @@ function frame(timestamp) {
 }
 
 function handleResize() {
-  drawCanvasScene();
+  resetGeometryCache();
+  render();
 }
 
 function handleKeydown(event) {
@@ -3096,15 +3226,15 @@ function handleKeydown(event) {
 }
 
 function renderSceneBackground() {
-  drawCanvasScene();
+  markBackgroundDirty();
+  render();
 }
 
-function drawCanvasScene() {
+function drawCanvasBackground() {
   const width = window.innerWidth;
   const height = window.innerHeight;
-  canvas.width = width * window.devicePixelRatio;
-  canvas.height = height * window.devicePixelRatio;
-  ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+  syncCanvasSize(canvas, ctx, width, height);
+  syncCanvasSize(backgroundCanvas, backgroundCtx, width, height);
   ctx.clearRect(0, 0, width, height);
 
   const gradient = ctx.createLinearGradient(0, 0, 0, height);
@@ -3128,6 +3258,20 @@ function drawCanvasScene() {
 
   drawCanvasPanels();
   drawCanvasReagents();
+
+  backgroundCtx.clearRect(0, 0, width, height);
+  backgroundCtx.drawImage(canvas, 0, 0, width, height);
+}
+
+function drawCanvasScene() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  syncCanvasSize(canvas, ctx, width, height);
+  ctx.clearRect(0, 0, width, height);
+  if (!backgroundCanvas.width || !backgroundCanvas.height) {
+    drawCanvasBackground();
+  }
+  ctx.drawImage(backgroundCanvas, 0, 0, width, height);
   drawCanvasTubes();
 }
 
@@ -3142,12 +3286,12 @@ function drawShelf(width, y, thickness) {
 }
 
 function drawCanvasPanels() {
-  document.querySelectorAll(".hero-panel, .reagent-panel, .experiment-panel, .status-card").forEach((panel) => {
-    const rect = panel.getBoundingClientRect();
+  scenePanels.forEach((panel, index) => {
+    const rect = getCachedRect(panel, `panel-${index}`);
     drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 26, "rgba(8, 20, 27, 0.7)", "rgba(149, 197, 214, 0.18)");
   });
 
-  const hero = document.querySelector(".hero-panel")?.getBoundingClientRect();
+  const hero = heroPanel ? getCachedRect(heroPanel, "panel-hero") : null;
   if (hero) {
     ctx.fillStyle = "#86d6ff";
     ctx.font = "12px Aptos, Trebuchet MS, sans-serif";
@@ -3157,24 +3301,24 @@ function drawCanvasPanels() {
     wrapCanvasText("Смешивание растворов и наблюдение признаков реакций", hero.x + 18, hero.y + 58, hero.width - 240, 30, 2);
   }
 
-  const reagentPanel = document.querySelector(".reagent-panel")?.getBoundingClientRect();
-  if (reagentPanel) {
+  const reagentPanelRect = reagentPanel ? getCachedRect(reagentPanel, "panel-reagents") : null;
+  if (reagentPanelRect) {
     ctx.fillStyle = "#edf7fb";
     ctx.font = "600 20px Cambria, Georgia, serif";
-    ctx.fillText("Стаканы с реагентами", reagentPanel.x + 16, reagentPanel.y + 28);
+    ctx.fillText("Стаканы с реагентами", reagentPanelRect.x + 16, reagentPanelRect.y + 28);
   }
 
-  const experimentPanel = document.querySelector(".experiment-panel")?.getBoundingClientRect();
-  if (experimentPanel) {
+  const experimentPanelRect = experimentPanel ? getCachedRect(experimentPanel, "panel-experiment") : null;
+  if (experimentPanelRect) {
     ctx.fillStyle = "#edf7fb";
     ctx.font = "600 20px Cambria, Georgia, serif";
-    ctx.fillText("Пробирки", experimentPanel.x + 16, experimentPanel.y + 28);
+    ctx.fillText("Пробирки", experimentPanelRect.x + 16, experimentPanelRect.y + 28);
   }
 }
 
 function drawCanvasReagents() {
   reagentElements.forEach((element, reagentId) => {
-    const rect = element.getBoundingClientRect();
+    const rect = getCachedRect(element, `reagent-${reagentId}`);
     const reagent = REAGENT_MAP[reagentId];
     drawRoundedRect(
       rect.x,
@@ -3202,7 +3346,7 @@ function drawCanvasTubes() {
     if (!card) {
       return;
     }
-    const rect = card.getBoundingClientRect();
+    const rect = getCachedRect(card, `tube-${tube.id}`);
     drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 22, "rgba(8, 22, 31, 0.84)", "rgba(171, 215, 230, 0.16)");
     ctx.fillStyle = "#edf7fb";
     ctx.font = "600 13px Aptos, Trebuchet MS, sans-serif";
@@ -3787,10 +3931,15 @@ function hasAny(ids, candidates) {
 }
 
 function seededUnit(seed) {
+  if (seededCache.has(seed)) {
+    return seededCache.get(seed);
+  }
   let hash = 2166136261;
   for (let index = 0; index < seed.length; index += 1) {
     hash ^= seed.charCodeAt(index);
     hash = Math.imul(hash, 16777619);
   }
-  return ((hash >>> 0) % 1000) / 1000;
+  const value = ((hash >>> 0) % 1000) / 1000;
+  seededCache.set(seed, value);
+  return value;
 }

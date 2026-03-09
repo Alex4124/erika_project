@@ -13,6 +13,19 @@ const REAGENTS = [
     tags: ["acid", "chloride"]
   },
   {
+    id: "hno3",
+    name: "Азотная кислота",
+    formula: "HNO₃",
+    description: "Бесцветный прозрачный раствор сильной кислоты.",
+    color: [220, 244, 255],
+    alpha: 0.43,
+    clarity: 0.96,
+    textureOpacity: 0.02,
+    sedimentOpacity: 0,
+    pHScore: 3.3,
+    tags: ["acid", "nitrate", "oxidizer"]
+  },
+  {
     id: "koh",
     name: "Гидроксид калия",
     formula: "KOH",
@@ -52,6 +65,19 @@ const REAGENTS = [
     tags: ["copper2", "nitrate"]
   },
   {
+    id: "ni_no3_2",
+    name: "Нитрат никеля",
+    formula: "Ni(NO₃)₂",
+    description: "Зелёный раствор ионов никеля(II).",
+    color: [126, 180, 108],
+    alpha: 0.72,
+    clarity: 0.82,
+    textureOpacity: 0.06,
+    sedimentOpacity: 0,
+    pHScore: 0.2,
+    tags: ["nickel2", "nitrate"]
+  },
+  {
     id: "agno3",
     name: "Нитрат серебра",
     formula: "AgNO₃",
@@ -78,6 +104,32 @@ const REAGENTS = [
     tags: ["barium", "chloride"]
   },
   {
+    id: "ca_no3_2",
+    name: "Нитрат кальция",
+    formula: "Ca(NO₃)₂",
+    description: "Бесцветный прозрачный раствор соли кальция.",
+    color: [232, 245, 252],
+    alpha: 0.34,
+    clarity: 0.95,
+    textureOpacity: 0.02,
+    sedimentOpacity: 0,
+    pHScore: 0,
+    tags: ["calcium", "nitrate"]
+  },
+  {
+    id: "znso4",
+    name: "Сульфат цинка",
+    formula: "ZnSO₄",
+    description: "Бесцветный раствор ионов цинка(II).",
+    color: [236, 245, 250],
+    alpha: 0.34,
+    clarity: 0.94,
+    textureOpacity: 0.02,
+    sedimentOpacity: 0,
+    pHScore: 0.18,
+    tags: ["zinc2", "sulfate"]
+  },
+  {
     id: "fecl3",
     name: "Хлорид трёхвалентного железа",
     formula: "FeCl₃",
@@ -91,6 +143,19 @@ const REAGENTS = [
     tags: ["iron3", "chloride"]
   },
   {
+    id: "alcl3",
+    name: "Хлорид алюминия",
+    formula: "AlCl₃",
+    description: "Бесцветный раствор соли алюминия с кислой реакцией среды.",
+    color: [226, 244, 252],
+    alpha: 0.36,
+    clarity: 0.95,
+    textureOpacity: 0.02,
+    sedimentOpacity: 0,
+    pHScore: 0.9,
+    tags: ["aluminum3", "chloride"]
+  },
+  {
     id: "ki",
     name: "Иодид калия",
     formula: "KI",
@@ -102,6 +167,19 @@ const REAGENTS = [
     sedimentOpacity: 0,
     pHScore: 0,
     tags: ["iodide"]
+  },
+  {
+    id: "nh4cl",
+    name: "Хлорид аммония",
+    formula: "NH₄Cl",
+    description: "Бесцветный раствор аммонийной соли со слабокислой реакцией.",
+    color: [236, 245, 250],
+    alpha: 0.34,
+    clarity: 0.96,
+    textureOpacity: 0.02,
+    sedimentOpacity: 0,
+    pHScore: 0.7,
+    tags: ["ammonium", "chloride"]
   },
   {
     id: "phenolphthalein",
@@ -243,6 +321,12 @@ const REAGENT_REFERENCE_DATA = {
     boilingPoint: "−85,1 °C",
     electrolyte: "сильный электролит"
   },
+  hno3: {
+    solubility: "смешивается с водой в любых соотношениях",
+    meltingPoint: "−41,6 °C",
+    boilingPoint: "83 °C",
+    electrolyte: "сильный электролит"
+  },
   koh: {
     solubility: "121 г/100 г H₂O (25 °C); очень хорошо растворим",
     meltingPoint: "≈360–380 °C",
@@ -261,6 +345,12 @@ const REAGENT_REFERENCE_DATA = {
     boilingPoint: "сублимирует / разлагается",
     electrolyte: "сильный электролит"
   },
+  ni_no3_2: {
+    solubility: "очень хорошо растворим в воде; образует зелёные гидраты",
+    meltingPoint: "≈56,7 °C для гексагидрата",
+    boilingPoint: "разлагается при нагревании",
+    electrolyte: "сильный электролит"
+  },
   agno3: {
     solubility: "122 г/100 мл H₂O (0 °C); хорошо растворим",
     meltingPoint: "212 °C",
@@ -273,16 +363,40 @@ const REAGENT_REFERENCE_DATA = {
     boilingPoint: "1560 °C",
     electrolyte: "сильный электролит"
   },
+  ca_no3_2: {
+    solubility: "121 г/100 г H₂O (20 °C); очень хорошо растворим",
+    meltingPoint: "≈561 °C",
+    boilingPoint: "разлагается",
+    electrolyte: "сильный электролит"
+  },
+  znso4: {
+    solubility: "57,7 г/100 г H₂O (20 °C); хорошо растворим",
+    meltingPoint: "≈680 °C (разл.)",
+    boilingPoint: "разлагается",
+    electrolyte: "сильный электролит"
+  },
   fecl3: {
     solubility: "74,4 г/100 мл H₂O (0 °C); хорошо растворим",
     meltingPoint: "304 °C",
     boilingPoint: "≈316 °C (разлагается)",
     electrolyte: "сильный электролит"
   },
+  alcl3: {
+    solubility: "хорошо растворим; в воде заметно гидролизуется",
+    meltingPoint: "192,4 °C",
+    boilingPoint: "≈180 °C (сублимирует)",
+    electrolyte: "сильный электролит"
+  },
   ki: {
     solubility: "148 г/100 г H₂O (25 °C); очень хорошо растворим",
     meltingPoint: "681 °C",
     boilingPoint: "1323 °C",
+    electrolyte: "сильный электролит"
+  },
+  nh4cl: {
+    solubility: "29,7 г/100 г H₂O (25 °C); хорошо растворим",
+    meltingPoint: "338 °C",
+    boilingPoint: "возгоняется / разлагается",
     electrolyte: "сильный электролит"
   },
   phenolphthalein: {
@@ -389,6 +503,29 @@ const ACIDIC_HYDROLYSIS_RULES = [
     ]
   },
   {
+    reagentId: "ni_no3_2",
+    boost: 1.04,
+    blockedBy: [
+      "nickel-hydroxide",
+      "nickel-phosphate",
+      "nickel-carbonate",
+      "nickel-silicate",
+      "nickel-sulfide"
+    ]
+  },
+  {
+    reagentId: "znso4",
+    boost: 0.96,
+    blockedBy: [
+      "zinc-hydroxide",
+      "zinc-hydroxide-dissolves-in-alkali",
+      "zinc-phosphate",
+      "zinc-carbonate",
+      "zinc-silicate",
+      "zinc-sulfide"
+    ]
+  },
+  {
     reagentId: "fecl3",
     boost: 1.48,
     blockedBy: [
@@ -396,6 +533,22 @@ const ACIDIC_HYDROLYSIS_RULES = [
       "iron-carbonate-hydrolysis",
       "iron-phosphate"
     ]
+  },
+  {
+    reagentId: "alcl3",
+    boost: 1.62,
+    blockedBy: [
+      "aluminum-hydroxide",
+      "aluminum-hydroxide-dissolves-in-alkali",
+      "aluminum-carbonate-hydrolysis",
+      "aluminum-phosphate",
+      "aluminum-sulfide-hydrolysis"
+    ]
+  },
+  {
+    reagentId: "nh4cl",
+    boost: 0.72,
+    blockedBy: ["ammonium-base-reaction"]
   }
 ];
 
@@ -481,7 +634,7 @@ const REACTION_RULES = [
     label: "Осаждение хлорида серебра",
     speed: "instant",
     note: "Мгновенно выпадает белый творожистый осадок AgCl.",
-    predicate: ({ ids }) => ids.has("agno3") && hasAny(ids, ["hcl", "bacl2", "fecl3"]),
+    predicate: ({ ids }) => ids.has("agno3") && hasChlorideSource(ids),
     precipitate: { color: [242, 242, 236], height: 0.16, opacity: 0.9 },
     animation: [
       { type: "flash", durationMs: 420, peak: 0.28 },
@@ -570,8 +723,11 @@ const REACTION_RULES = [
     priority: 12,
     suppresses: ["silver-oxide"],
     speed: "fast",
-    note: "Бурый осадок Ag₂O растворяется в серной кислоте, смесь заметно светлеет.",
-    predicate: ({ ids }) => ids.has("agno3") && hasAny(ids, ["koh", "ca_oh_2"]) && ids.has("h2so4"),
+    note: "Бурый осадок Ag₂O растворяется в кислоте, смесь заметно светлеет.",
+    predicate: ({ ids }) =>
+      ids.has("agno3")
+      && hasAny(ids, ["koh", "ca_oh_2"])
+      && hasAny(ids, ["h2so4", "hno3"]),
     clarify: 0.24,
     animation: [
       { type: "dissolve", durationMs: 1480, peak: 1 },
@@ -611,7 +767,7 @@ const REACTION_RULES = [
     label: "Осаждение сульфата бария",
     speed: "instant",
     note: "Белый тяжёлый осадок BaSO₄ выпадает сразу и быстро оседает.",
-    predicate: ({ ids }) => ids.has("bacl2") && ids.has("h2so4"),
+    predicate: ({ ids }) => ids.has("bacl2") && hasSulfateSource(ids),
     precipitate: { color: [244, 244, 241], height: 0.17, opacity: 0.94 },
     animation: [
       { type: "flash", durationMs: 380, peak: 0.2 },
@@ -623,7 +779,7 @@ const REACTION_RULES = [
     label: "Осаждение сульфата кальция",
     speed: "fast",
     note: "Смесь заметно мутнеет, выпадает белый мелкокристаллический осадок CaSO₄.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("h2so4"),
+    predicate: ({ ids }) => hasCalciumSource(ids) && hasSulfateSource(ids),
     precipitate: { color: [244, 243, 238], height: 0.18, opacity: 0.9 },
     animation: [
       { type: "flash", durationMs: 320, peak: 0.12 },
@@ -648,7 +804,7 @@ const REACTION_RULES = [
     suppresses: ["barium-carbonate", "acid-carbonate"],
     speed: "fast",
     note: "Белый осадок BaCO₃ растворяется в кислоте с выделением пузырьков CO₂.",
-    predicate: ({ ids }) => ids.has("bacl2") && ids.has("li2co3") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("bacl2") && ids.has("li2co3") && hasAcid(ids),
     clarify: 0.28,
     animation: [
       { type: "dissolve", durationMs: 1560, peak: 1 },
@@ -675,7 +831,7 @@ const REACTION_RULES = [
     suppresses: ["copper-hydroxide"],
     speed: "fast",
     note: "Голубой осадок Cu(OH)₂ растворяется в кислоте, раствор снова становится голубым и прозрачнее.",
-    predicate: ({ ids }) => ids.has("cu_no3_2") && hasAny(ids, ["koh", "ca_oh_2"]) && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("cu_no3_2") && hasAny(ids, ["koh", "ca_oh_2"]) && hasAcid(ids),
     clarify: 0.24,
     overlay: { color: [98, 188, 236], opacity: 0.16 },
     animation: [
@@ -702,7 +858,7 @@ const REACTION_RULES = [
     suppresses: ["copper-phosphate"],
     speed: "fast",
     note: "Ярко-голубой осадок фосфата меди растворяется в кислоте, раствор снова становится ярко-голубым.",
-    predicate: ({ ids }) => ids.has("cu_no3_2") && ids.has("na3po4") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("cu_no3_2") && ids.has("na3po4") && hasAcid(ids),
     clarify: 0.28,
     overlay: { color: [88, 186, 240], opacity: 0.18 },
     animation: [
@@ -729,7 +885,7 @@ const REACTION_RULES = [
     suppresses: ["copper-carbonate", "acid-carbonate"],
     speed: "fast",
     note: "Сине-зелёный осадок карбоната меди растворяется в кислоте, выделяется CO₂, раствор снова становится голубым.",
-    predicate: ({ ids }) => ids.has("cu_no3_2") && ids.has("li2co3") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("cu_no3_2") && ids.has("li2co3") && hasAcid(ids),
     clarify: 0.3,
     overlay: { color: [96, 182, 228], opacity: 0.18 },
     animation: [
@@ -758,7 +914,7 @@ const REACTION_RULES = [
     suppresses: ["copper-silicate"],
     speed: "medium",
     note: "Голубовато-зелёный осадок силиката меди разрушается кислотой, раствор синеет, остаётся гель кремниевой кислоты.",
-    predicate: ({ ids }) => ids.has("cu_no3_2") && ids.has("k2sio3") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("cu_no3_2") && ids.has("k2sio3") && hasAcid(ids),
     overlay: { color: [84, 180, 232], opacity: 0.2 },
     animation: [
       { type: "dissolve", durationMs: 1740, peak: 1 },
@@ -786,7 +942,7 @@ const REACTION_RULES = [
     note: "Бурый осадок соединений железа постепенно растворяется в кислоте, раствор становится прозрачнее.",
     predicate: ({ ids }) =>
       ids.has("fecl3")
-      && hasAny(ids, ["hcl", "h2so4"])
+      && hasAcid(ids)
       && (hasAny(ids, ["koh", "ca_oh_2"]) || ids.has("li2co3")),
     clarify: 0.28,
     overlay: { color: [182, 122, 64], opacity: 0.2 },
@@ -800,7 +956,7 @@ const REACTION_RULES = [
     label: "Осаждение карбоната кальция",
     speed: "fast",
     note: "Из раствора выпадает плотный белый осадок CaCO₃.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("li2co3"),
+    predicate: ({ ids }) => hasCalciumSource(ids) && ids.has("li2co3"),
     precipitate: { color: [246, 245, 242], height: 0.24, opacity: 0.98 },
     clarify: 0.18,
     animation: [
@@ -815,7 +971,7 @@ const REACTION_RULES = [
     suppresses: ["calcium-carbonate", "acid-carbonate"],
     speed: "fast",
     note: "Белый осадок CaCO₃ растворяется в кислоте с выделением CO₂.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("li2co3") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => hasCalciumSource(ids) && ids.has("li2co3") && hasAcid(ids),
     clarify: 0.32,
     animation: [
       { type: "dissolve", durationMs: 1620, peak: 1 },
@@ -853,7 +1009,7 @@ const REACTION_RULES = [
     suppresses: ["iron-phosphate"],
     speed: "fast",
     note: "Светлый осадок фосфата железа растворяется в кислоте, раствор вновь желтеет и светлеет.",
-    predicate: ({ ids }) => ids.has("fecl3") && ids.has("na3po4") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("fecl3") && ids.has("na3po4") && hasAcid(ids),
     clarify: 0.26,
     overlay: { color: [186, 138, 76], opacity: 0.18 },
     animation: [
@@ -877,7 +1033,7 @@ const REACTION_RULES = [
     suppresses: ["barium-phosphate"],
     speed: "fast",
     note: "Белый осадок фосфата бария растворяется в кислоте; в серной кислоте его сменяет осадок BaSO₄.",
-    predicate: ({ ids }) => ids.has("bacl2") && ids.has("na3po4") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("bacl2") && ids.has("na3po4") && hasAcid(ids),
     clarify: 0.18,
     animation: [
       { type: "dissolve", durationMs: 1540, peak: 1 },
@@ -889,7 +1045,7 @@ const REACTION_RULES = [
     label: "Осаждение фосфата кальция",
     speed: "fast",
     note: "Образуется белый осадок фосфата кальция.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("na3po4"),
+    predicate: ({ ids }) => hasCalciumSource(ids) && ids.has("na3po4"),
     precipitate: { color: [244, 243, 238], height: 0.18, opacity: 0.9 },
     animation: [
       { type: "precipitation", durationMs: 1080, peak: 1 }
@@ -902,7 +1058,7 @@ const REACTION_RULES = [
     suppresses: ["calcium-phosphate"],
     speed: "fast",
     note: "Белый осадок фосфата кальция растворяется в кислоте; в серной кислоте мутность может сохраниться из-за CaSO₄.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("na3po4") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => hasCalciumSource(ids) && ids.has("na3po4") && hasAcid(ids),
     clarify: 0.18,
     animation: [
       { type: "dissolve", durationMs: 1540, peak: 1 },
@@ -929,7 +1085,7 @@ const REACTION_RULES = [
     suppresses: ["barium-silicate"],
     speed: "medium",
     note: "Белый осадок силиката бария разрушается кислотой, остаётся более прозрачный гель кремниевой кислоты.",
-    predicate: ({ ids }) => ids.has("bacl2") && ids.has("k2sio3") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => ids.has("bacl2") && ids.has("k2sio3") && hasAcid(ids),
     clarify: 0.08,
     animation: [
       { type: "dissolve", durationMs: 1760, peak: 1 },
@@ -941,7 +1097,7 @@ const REACTION_RULES = [
     label: "Осаждение силиката кальция",
     speed: "medium",
     note: "Появляется белый хлопьевидный осадок силиката кальция.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("k2sio3"),
+    predicate: ({ ids }) => hasCalciumSource(ids) && ids.has("k2sio3"),
     precipitate: { color: [241, 243, 241], height: 0.17, opacity: 0.86 },
     gelOpacity: 0.18,
     animation: [
@@ -956,7 +1112,7 @@ const REACTION_RULES = [
     suppresses: ["calcium-silicate"],
     speed: "medium",
     note: "Белый осадок силиката кальция постепенно разрушается кислотой, остаётся желеобразная кремниевая кислота.",
-    predicate: ({ ids }) => ids.has("ca_oh_2") && ids.has("k2sio3") && hasAny(ids, ["hcl", "h2so4"]),
+    predicate: ({ ids }) => hasCalciumSource(ids) && ids.has("k2sio3") && hasAcid(ids),
     clarify: 0.08,
     animation: [
       { type: "dissolve", durationMs: 1740, peak: 1 },
@@ -998,11 +1154,404 @@ const REACTION_RULES = [
     ]
   },
   {
+    key: "ammonium-base-reaction",
+    label: "Выделение аммиака из аммонийной соли",
+    speed: "fast",
+    note: "При добавлении щёлочи из аммонийной соли выделяется аммиак, заметны пузырьки газа.",
+    predicate: ({ ids }) => ids.has("nh4cl") && hasAny(ids, ["koh", "ca_oh_2"]) && !hasAcid(ids),
+    animation: [
+      { type: "gas", durationMs: 1880, peak: 0.9 },
+      { type: "flash", durationMs: 240, peak: 0.08 }
+    ]
+  },
+  {
+    key: "aluminum-hydroxide",
+    label: "Осаждение гидроксида алюминия",
+    speed: "fast",
+    note: "Появляется белый студенистый осадок Al(OH)₃.",
+    predicate: ({ ids, reagents }) =>
+      ids.has("alcl3")
+      && hasAny(ids, ["koh", "ca_oh_2"])
+      && !hasExcessKoh(reagents),
+    precipitate: { color: [244, 244, 241], height: 0.2, opacity: 0.86 },
+    gelOpacity: 0.2,
+    animation: [
+      { type: "color-wave", durationMs: 980, peak: 0.22 },
+      { type: "precipitation", durationMs: 1320, peak: 1 }
+    ]
+  },
+  {
+    key: "aluminum-hydroxide-dissolves-in-alkali",
+    label: "Растворение гидроксида алюминия в избытке щёлочи",
+    priority: 13,
+    suppresses: ["aluminum-hydroxide"],
+    speed: "medium",
+    note: "Белый гель Al(OH)₃ растворяется в избытке KOH, раствор светлеет и снова становится прозрачнее.",
+    predicate: ({ ids, reagents }) => ids.has("alcl3") && hasExcessKoh(reagents) && !hasAcid(ids),
+    clarify: 0.32,
+    animation: [
+      { type: "dissolve", durationMs: 1640, peak: 1 },
+      { type: "color-wave", durationMs: 1200, peak: 0.2 }
+    ]
+  },
+  {
+    key: "acid-dissolves-aluminum-hydroxide",
+    label: "Растворение гидроксида алюминия кислотой",
+    priority: 14,
+    suppresses: ["aluminum-hydroxide", "aluminum-hydroxide-dissolves-in-alkali", "aluminum-carbonate-hydrolysis"],
+    speed: "fast",
+    note: "Белый осадок Al(OH)₃ растворяется в кислоте.",
+    predicate: ({ ids }) =>
+      ids.has("alcl3")
+      && hasAcid(ids)
+      && (hasAny(ids, ["koh", "ca_oh_2"]) || ids.has("li2co3")),
+    clarify: 0.32,
+    animation: [
+      { type: "dissolve", durationMs: 1600, peak: 1 },
+      { type: "color-wave", durationMs: 1120, peak: 0.18 }
+    ]
+  },
+  {
+    key: "aluminum-carbonate-hydrolysis",
+    label: "Гидролиз карбоната алюминия",
+    speed: "fast",
+    note: "Сразу образуется белый гелеобразный осадок Al(OH)₃, выделяются пузырьки CO₂.",
+    predicate: ({ ids }) => ids.has("alcl3") && ids.has("li2co3"),
+    precipitate: { color: [243, 243, 239], height: 0.22, opacity: 0.88 },
+    gelOpacity: 0.24,
+    animation: [
+      { type: "precipitation", durationMs: 1380, peak: 1 },
+      { type: "gas", durationMs: 1680, peak: 0.64 }
+    ]
+  },
+  {
+    key: "aluminum-phosphate",
+    label: "Осаждение фосфата алюминия",
+    speed: "fast",
+    note: "Выпадает белый осадок AlPO₄.",
+    predicate: ({ ids }) => ids.has("alcl3") && ids.has("na3po4"),
+    precipitate: { color: [242, 243, 239], height: 0.18, opacity: 0.88 },
+    animation: [{ type: "precipitation", durationMs: 1160, peak: 1 }]
+  },
+  {
+    key: "acid-dissolves-aluminum-phosphate",
+    label: "Растворение фосфата алюминия кислотой",
+    priority: 12,
+    suppresses: ["aluminum-phosphate"],
+    speed: "fast",
+    note: "Белый осадок фосфата алюминия растворяется в кислоте.",
+    predicate: ({ ids }) => ids.has("alcl3") && ids.has("na3po4") && hasAcid(ids),
+    clarify: 0.24,
+    animation: [
+      { type: "dissolve", durationMs: 1540, peak: 1 },
+      { type: "color-wave", durationMs: 1040, peak: 0.16 }
+    ]
+  },
+  {
+    key: "aluminum-sulfide-hydrolysis",
+    label: "Гидролиз сульфида алюминия",
+    speed: "fast",
+    note: "Появляется белый студенистый осадок Al(OH)₃ и одновременно выделяется H₂S.",
+    predicate: ({ ids }) => ids.has("alcl3") && ids.has("na2s"),
+    precipitate: { color: [242, 243, 239], height: 0.2, opacity: 0.84 },
+    gelOpacity: 0.18,
+    animation: [
+      { type: "precipitation", durationMs: 1260, peak: 1 },
+      { type: "gas", durationMs: 1820, peak: 0.9 }
+    ]
+  },
+  {
+    key: "zinc-hydroxide",
+    label: "Осаждение гидроксида цинка",
+    speed: "fast",
+    note: "Выпадает белый студенистый осадок Zn(OH)₂.",
+    predicate: ({ ids, reagents }) =>
+      ids.has("znso4")
+      && hasAny(ids, ["koh", "ca_oh_2"])
+      && !hasExcessKoh(reagents),
+    precipitate: { color: [244, 244, 241], height: 0.19, opacity: 0.86 },
+    gelOpacity: 0.12,
+    animation: [
+      { type: "color-wave", durationMs: 920, peak: 0.18 },
+      { type: "precipitation", durationMs: 1240, peak: 1 }
+    ]
+  },
+  {
+    key: "zinc-hydroxide-dissolves-in-alkali",
+    label: "Растворение гидроксида цинка в избытке щёлочи",
+    priority: 13,
+    suppresses: ["zinc-hydroxide"],
+    speed: "medium",
+    note: "Белый осадок Zn(OH)₂ растворяется в избытке KOH.",
+    predicate: ({ ids, reagents }) => ids.has("znso4") && hasExcessKoh(reagents) && !hasAcid(ids),
+    clarify: 0.28,
+    animation: [
+      { type: "dissolve", durationMs: 1580, peak: 1 },
+      { type: "color-wave", durationMs: 1080, peak: 0.16 }
+    ]
+  },
+  {
+    key: "acid-dissolves-zinc-hydroxide",
+    label: "Растворение гидроксида цинка кислотой",
+    priority: 14,
+    suppresses: ["zinc-hydroxide", "zinc-hydroxide-dissolves-in-alkali"],
+    speed: "fast",
+    note: "Белый осадок Zn(OH)₂ растворяется в кислоте.",
+    predicate: ({ ids }) => ids.has("znso4") && hasAny(ids, ["koh", "ca_oh_2"]) && hasAcid(ids),
+    clarify: 0.28,
+    animation: [
+      { type: "dissolve", durationMs: 1500, peak: 1 },
+      { type: "color-wave", durationMs: 1020, peak: 0.16 }
+    ]
+  },
+  {
+    key: "zinc-phosphate",
+    label: "Осаждение фосфата цинка",
+    speed: "fast",
+    note: "Образуется белый осадок фосфата цинка.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("na3po4"),
+    precipitate: { color: [243, 243, 239], height: 0.18, opacity: 0.88 },
+    animation: [{ type: "precipitation", durationMs: 1120, peak: 1 }]
+  },
+  {
+    key: "acid-dissolves-zinc-phosphate",
+    label: "Растворение фосфата цинка кислотой",
+    priority: 12,
+    suppresses: ["zinc-phosphate"],
+    speed: "fast",
+    note: "Белый осадок фосфата цинка растворяется в кислоте.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("na3po4") && hasAcid(ids),
+    clarify: 0.22,
+    animation: [
+      { type: "dissolve", durationMs: 1520, peak: 1 },
+      { type: "color-wave", durationMs: 1040, peak: 0.14 }
+    ]
+  },
+  {
+    key: "zinc-carbonate",
+    label: "Осаждение карбоната цинка",
+    speed: "fast",
+    note: "Появляется белый осадок карбоната цинка.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("li2co3"),
+    precipitate: { color: [242, 243, 239], height: 0.2, opacity: 0.9 },
+    animation: [
+      { type: "precipitation", durationMs: 1260, peak: 1 },
+      { type: "color-wave", durationMs: 960, peak: 0.14 }
+    ]
+  },
+  {
+    key: "acid-dissolves-zinc-carbonate",
+    label: "Растворение карбоната цинка кислотой",
+    priority: 12,
+    suppresses: ["zinc-carbonate", "acid-carbonate"],
+    speed: "fast",
+    note: "Белый осадок карбоната цинка растворяется в кислоте с выделением CO₂.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("li2co3") && hasAcid(ids),
+    clarify: 0.28,
+    animation: [
+      { type: "dissolve", durationMs: 1560, peak: 1 },
+      { type: "gas", durationMs: 1900, peak: 0.84 }
+    ]
+  },
+  {
+    key: "zinc-silicate",
+    label: "Осаждение силиката цинка",
+    speed: "medium",
+    note: "Раствор мутнеет, появляется белый осадок силиката цинка.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("k2sio3"),
+    precipitate: { color: [241, 243, 240], height: 0.17, opacity: 0.82 },
+    gelOpacity: 0.12,
+    animation: [
+      { type: "precipitation", durationMs: 1500, peak: 1 },
+      { type: "color-wave", durationMs: 1320, peak: 0.14 }
+    ]
+  },
+  {
+    key: "acid-decomposes-zinc-silicate",
+    label: "Разложение силиката цинка кислотой",
+    priority: 12,
+    suppresses: ["zinc-silicate"],
+    speed: "medium",
+    note: "Белый осадок силиката цинка разрушается кислотой, остаётся гель кремниевой кислоты.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("k2sio3") && hasAcid(ids),
+    clarify: 0.1,
+    animation: [
+      { type: "dissolve", durationMs: 1660, peak: 1 },
+      { type: "color-wave", durationMs: 1260, peak: 0.14 }
+    ]
+  },
+  {
+    key: "zinc-sulfide",
+    label: "Осаждение сульфида цинка",
+    speed: "fast",
+    note: "Выпадает белый осадок ZnS.",
+    predicate: ({ ids }) => ids.has("znso4") && ids.has("na2s"),
+    precipitate: { color: [243, 244, 240], height: 0.19, opacity: 0.88 },
+    animation: [
+      { type: "flash", durationMs: 300, peak: 0.12 },
+      { type: "precipitation", durationMs: 980, peak: 1 }
+    ]
+  },
+  {
+    key: "nickel-hydroxide",
+    label: "Осаждение гидроксида никеля",
+    speed: "fast",
+    note: "Появляется светло-зелёный осадок Ni(OH)₂.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && hasAny(ids, ["koh", "ca_oh_2"]),
+    precipitate: { color: [160, 196, 112], height: 0.2, opacity: 0.86 },
+    animation: [
+      { type: "color-wave", durationMs: 980, peak: 0.26 },
+      { type: "precipitation", durationMs: 1260, peak: 1 }
+    ]
+  },
+  {
+    key: "acid-dissolves-nickel-hydroxide",
+    label: "Растворение гидроксида никеля кислотой",
+    priority: 12,
+    suppresses: ["nickel-hydroxide"],
+    speed: "fast",
+    note: "Светло-зелёный осадок Ni(OH)₂ растворяется в кислоте.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && hasAny(ids, ["koh", "ca_oh_2"]) && hasAcid(ids),
+    clarify: 0.24,
+    overlay: { color: [146, 192, 118], opacity: 0.12 },
+    animation: [
+      { type: "dissolve", durationMs: 1540, peak: 1 },
+      { type: "color-wave", durationMs: 1120, peak: 0.18 }
+    ]
+  },
+  {
+    key: "nickel-phosphate",
+    label: "Осаждение фосфата никеля",
+    speed: "fast",
+    note: "Выпадает бледно-зелёный осадок фосфата никеля.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("na3po4"),
+    precipitate: { color: [174, 196, 134], height: 0.18, opacity: 0.86 },
+    animation: [{ type: "precipitation", durationMs: 1160, peak: 1 }]
+  },
+  {
+    key: "acid-dissolves-nickel-phosphate",
+    label: "Растворение фосфата никеля кислотой",
+    priority: 12,
+    suppresses: ["nickel-phosphate"],
+    speed: "fast",
+    note: "Бледно-зелёный осадок фосфата никеля растворяется в кислоте.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("na3po4") && hasAcid(ids),
+    clarify: 0.22,
+    overlay: { color: [148, 188, 116], opacity: 0.1 },
+    animation: [
+      { type: "dissolve", durationMs: 1540, peak: 1 },
+      { type: "color-wave", durationMs: 1040, peak: 0.14 }
+    ]
+  },
+  {
+    key: "nickel-carbonate",
+    label: "Осаждение карбоната никеля",
+    speed: "fast",
+    note: "Появляется светло-зелёный осадок карбоната никеля.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("li2co3"),
+    precipitate: { color: [148, 186, 118], height: 0.2, opacity: 0.88 },
+    animation: [
+      { type: "precipitation", durationMs: 1260, peak: 1 },
+      { type: "color-wave", durationMs: 1020, peak: 0.18 }
+    ]
+  },
+  {
+    key: "acid-dissolves-nickel-carbonate",
+    label: "Растворение карбоната никеля кислотой",
+    priority: 12,
+    suppresses: ["nickel-carbonate", "acid-carbonate"],
+    speed: "fast",
+    note: "Зелёный осадок карбоната никеля растворяется в кислоте с выделением CO₂.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("li2co3") && hasAcid(ids),
+    clarify: 0.26,
+    overlay: { color: [142, 186, 112], opacity: 0.12 },
+    animation: [
+      { type: "dissolve", durationMs: 1600, peak: 1 },
+      { type: "gas", durationMs: 1940, peak: 0.82 }
+    ]
+  },
+  {
+    key: "nickel-silicate",
+    label: "Осаждение силиката никеля",
+    speed: "medium",
+    note: "Смесь мутнеет, появляется серо-зелёный осадок силиката никеля.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("k2sio3"),
+    precipitate: { color: [132, 176, 126], height: 0.18, opacity: 0.84 },
+    gelOpacity: 0.1,
+    animation: [
+      { type: "precipitation", durationMs: 1520, peak: 1 },
+      { type: "color-wave", durationMs: 1360, peak: 0.18 }
+    ]
+  },
+  {
+    key: "acid-decomposes-nickel-silicate",
+    label: "Разложение силиката никеля кислотой",
+    priority: 12,
+    suppresses: ["nickel-silicate"],
+    speed: "medium",
+    note: "Осадок силиката никеля разрушается кислотой, остаётся гель кремниевой кислоты.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("k2sio3") && hasAcid(ids),
+    clarify: 0.12,
+    overlay: { color: [142, 182, 118], opacity: 0.1 },
+    animation: [
+      { type: "dissolve", durationMs: 1660, peak: 1 },
+      { type: "color-wave", durationMs: 1220, peak: 0.14 }
+    ]
+  },
+  {
+    key: "nickel-sulfide",
+    label: "Осаждение сульфида никеля",
+    speed: "instant",
+    note: "Раствор темнеет, выпадает чёрный осадок NiS.",
+    predicate: ({ ids }) => ids.has("ni_no3_2") && ids.has("na2s"),
+    precipitate: { color: [40, 43, 46], height: 0.21, opacity: 0.92 },
+    animation: [
+      { type: "flash", durationMs: 340, peak: 0.16 },
+      { type: "precipitation", durationMs: 760, peak: 1 }
+    ]
+  },
+  {
+    key: "acid-dissolves-silver-phosphate",
+    label: "Растворение фосфата серебра кислотой",
+    priority: 12,
+    suppresses: ["silver-phosphate"],
+    speed: "fast",
+    note: "Жёлтый осадок Ag₃PO₄ растворяется в кислоте.",
+    predicate: ({ ids }) =>
+      ids.has("agno3")
+      && ids.has("na3po4")
+      && hasAny(ids, ["h2so4", "hno3"])
+      && !ids.has("hcl"),
+    clarify: 0.24,
+    animation: [
+      { type: "dissolve", durationMs: 1520, peak: 1 },
+      { type: "color-wave", durationMs: 1040, peak: 0.16 }
+    ]
+  },
+  {
+    key: "acid-dissolves-silver-carbonate",
+    label: "Растворение карбоната серебра кислотой",
+    priority: 12,
+    suppresses: ["silver-carbonate", "acid-carbonate"],
+    speed: "fast",
+    note: "Бледно-жёлтый осадок Ag₂CO₃ растворяется в кислоте с выделением CO₂.",
+    predicate: ({ ids }) =>
+      ids.has("agno3")
+      && ids.has("li2co3")
+      && hasAny(ids, ["h2so4", "hno3"])
+      && !ids.has("hcl"),
+    clarify: 0.24,
+    animation: [
+      { type: "dissolve", durationMs: 1540, peak: 1 },
+      { type: "gas", durationMs: 1880, peak: 0.82 }
+    ]
+  },
+  {
     key: "acid-carbonate",
     label: "Разложение карбоната кислотой",
     speed: "fast",
     note: "Идёт бурное выделение пузырьков CO₂, мутность постепенно снижается.",
-    predicate: ({ ids }) => hasAny(ids, ["hcl", "h2so4"]) && ids.has("li2co3"),
+    predicate: ({ ids }) => hasAcid(ids) && ids.has("li2co3"),
     clarify: 0.22,
     animation: [
       { type: "gas", durationMs: 2200, peak: 1 },
@@ -1014,7 +1563,7 @@ const REACTION_RULES = [
     label: "Выделение сероводорода",
     speed: "fast",
     note: "Кислота вытесняет H₂S: наблюдаются быстрые пузырьки газа.",
-    predicate: ({ ids }) => hasAny(ids, ["hcl", "h2so4"]) && ids.has("na2s"),
+    predicate: ({ ids }) => hasAcid(ids) && ids.has("na2s"),
     animation: [{ type: "gas", durationMs: 1800, peak: 0.92 }]
   },
   {
@@ -1022,7 +1571,7 @@ const REACTION_RULES = [
     label: "Образование кремниевой кислоты",
     speed: "slow",
     note: "Раствор постепенно желируется, появляется бесцветный студенистый осадок.",
-    predicate: ({ ids }) => hasAny(ids, ["hcl", "h2so4"]) && ids.has("k2sio3"),
+    predicate: ({ ids }) => hasAcid(ids) && ids.has("k2sio3"),
     precipitate: { color: [236, 240, 239], height: 0.1, opacity: 0.42 },
     gelOpacity: 0.42,
     animation: [
@@ -1051,7 +1600,7 @@ const REACTION_RULES = [
     priority: 14,
     speed: "fast",
     note: "Фиолетовый перманганат быстро обесцвечивается, раствор буреет из-за выделения йода.",
-    predicate: ({ ids }) => ids.has("kmno4") && ids.has("ki") && ids.has("h2so4"),
+    predicate: ({ ids }) => ids.has("kmno4") && ids.has("ki") && hasPermanganateCompatibleAcid(ids),
     overlay: { color: [144, 62, 18], opacity: 0.74 },
     bleach: 0.28,
     animation: [
@@ -1080,7 +1629,7 @@ const REACTION_RULES = [
     priority: 15,
     speed: "fast",
     note: "Фиолетовая окраска быстро исчезает, смесь нагревается и активно выделяет O₂.",
-    predicate: ({ ids }) => ids.has("kmno4") && ids.has("h2o2") && ids.has("h2so4"),
+    predicate: ({ ids }) => ids.has("kmno4") && ids.has("h2o2") && hasPermanganateCompatibleAcid(ids),
     bleach: 0.74,
     animation: [
       { type: "redox", durationMs: 1760, peak: 0.9 },
@@ -1100,9 +1649,11 @@ const REACTION_EQUATIONS = {
   "silver-phosphate-chloride-transition": ["Ag₃PO₄↓ + 3HCl → 3AgCl↓ + H₃PO₄"],
   "silver-oxide": ["2Ag⁺ + 2OH⁻ → Ag₂O↓ + H₂O"],
   "silver-oxide-chloride-transition": ["Ag₂O↓ + 2HCl → 2AgCl↓ + H₂O"],
-  "acid-dissolves-silver-oxide": ["Ag₂O↓ + H₂SO₄ → Ag₂SO₄ + H₂O"],
+  "acid-dissolves-silver-oxide": ["Ag₂O↓ + 2H⁺ → 2Ag⁺ + H₂O"],
   "silver-carbonate": ["2Ag⁺ + CO₃²⁻ → Ag₂CO₃↓"],
   "silver-carbonate-chloride-transition": ["Ag₂CO₃↓ + 2HCl → 2AgCl↓ + H₂O + CO₂↑"],
+  "acid-dissolves-silver-phosphate": ["Ag₃PO₄↓ + 3H⁺ → 3Ag⁺ + H₃PO₄"],
+  "acid-dissolves-silver-carbonate": ["Ag₂CO₃↓ + 2H⁺ → 2Ag⁺ + H₂O + CO₂↑"],
   "barium-sulfate": ["Ba²⁺ + SO₄²⁻ → BaSO₄↓"],
   "calcium-sulfate": ["Ca²⁺ + SO₄²⁻ → CaSO₄↓"],
   "barium-carbonate": ["Ba²⁺ + CO₃²⁻ → BaCO₃↓"],
@@ -1133,6 +1684,33 @@ const REACTION_EQUATIONS = {
   "copper-sulfide": ["Cu²⁺ + S²⁻ → CuS↓"],
   "iron-iodide-redox": ["2Fe³⁺ + 2I⁻ → 2Fe²⁺ + I₂"],
   "copper-iodide-redox": ["2Cu²⁺ + 4I⁻ → 2CuI↓ + I₂"],
+  "ammonium-base-reaction": ["NH₄⁺ + OH⁻ → NH₃↑ + H₂O"],
+  "aluminum-hydroxide": ["Al³⁺ + 3OH⁻ → Al(OH)₃↓"],
+  "aluminum-hydroxide-dissolves-in-alkali": ["Al(OH)₃↓ + OH⁻ → [Al(OH)₄]⁻"],
+  "acid-dissolves-aluminum-hydroxide": ["Al(OH)₃↓ + 3H⁺ → Al³⁺ + 3H₂O"],
+  "aluminum-carbonate-hydrolysis": ["2Al³⁺ + 3CO₃²⁻ + 3H₂O → 2Al(OH)₃↓ + 3CO₂↑"],
+  "aluminum-phosphate": ["Al³⁺ + PO₄³⁻ → AlPO₄↓"],
+  "acid-dissolves-aluminum-phosphate": ["AlPO₄↓ + 3H⁺ → Al³⁺ + H₃PO₄"],
+  "aluminum-sulfide-hydrolysis": ["2Al³⁺ + 3S²⁻ + 6H₂O → 2Al(OH)₃↓ + 3H₂S↑"],
+  "zinc-hydroxide": ["Zn²⁺ + 2OH⁻ → Zn(OH)₂↓"],
+  "zinc-hydroxide-dissolves-in-alkali": ["Zn(OH)₂↓ + 2OH⁻ → [Zn(OH)₄]²⁻"],
+  "acid-dissolves-zinc-hydroxide": ["Zn(OH)₂↓ + 2H⁺ → Zn²⁺ + 2H₂O"],
+  "zinc-phosphate": ["3Zn²⁺ + 2PO₄³⁻ → Zn₃(PO₄)₂↓"],
+  "acid-dissolves-zinc-phosphate": ["Zn₃(PO₄)₂↓ + 6H⁺ → 3Zn²⁺ + 2H₃PO₄"],
+  "zinc-carbonate": ["Zn²⁺ + CO₃²⁻ → ZnCO₃↓"],
+  "acid-dissolves-zinc-carbonate": ["ZnCO₃↓ + 2H⁺ → Zn²⁺ + H₂O + CO₂↑"],
+  "zinc-silicate": ["Zn²⁺ + SiO₃²⁻ → ZnSiO₃↓"],
+  "acid-decomposes-zinc-silicate": ["ZnSiO₃↓ + 2H⁺ → Zn²⁺ + H₂SiO₃↓"],
+  "zinc-sulfide": ["Zn²⁺ + S²⁻ → ZnS↓"],
+  "nickel-hydroxide": ["Ni²⁺ + 2OH⁻ → Ni(OH)₂↓"],
+  "acid-dissolves-nickel-hydroxide": ["Ni(OH)₂↓ + 2H⁺ → Ni²⁺ + 2H₂O"],
+  "nickel-phosphate": ["3Ni²⁺ + 2PO₄³⁻ → Ni₃(PO₄)₂↓"],
+  "acid-dissolves-nickel-phosphate": ["Ni₃(PO₄)₂↓ + 6H⁺ → 3Ni²⁺ + 2H₃PO₄"],
+  "nickel-carbonate": ["Ni²⁺ + CO₃²⁻ → NiCO₃↓"],
+  "acid-dissolves-nickel-carbonate": ["NiCO₃↓ + 2H⁺ → Ni²⁺ + H₂O + CO₂↑"],
+  "nickel-silicate": ["Ni²⁺ + SiO₃²⁻ → NiSiO₃↓"],
+  "acid-decomposes-nickel-silicate": ["NiSiO₃↓ + 2H⁺ → Ni²⁺ + H₂SiO₃↓"],
+  "nickel-sulfide": ["Ni²⁺ + S²⁻ → NiS↓"],
   "acid-carbonate": ["CO₃²⁻ + 2H⁺ → CO₂↑ + H₂O"],
   "acid-sulfide": ["S²⁻ + 2H⁺ → H₂S↑"],
   "acid-silicate": ["SiO₃²⁻ + 2H⁺ → H₂SiO₃↓"],
@@ -1145,11 +1723,16 @@ const REACTION_EQUATIONS = {
 const REACTION_MOLECULAR_EQUATIONS = {
   "acid-base-neutralization": [
     "HCl + KOH → KCl + H₂O",
-    "H₂SO₄ + 2KOH → K₂SO₄ + 2H₂O"
+    "HNO₃ + KOH → KNO₃ + H₂O",
+    "H₂SO₄ + 2KOH → K₂SO₄ + 2H₂O",
+    "2HCl + Ca(OH)₂ → CaCl₂ + 2H₂O",
+    "2HNO₃ + Ca(OH)₂ → Ca(NO₃)₂ + 2H₂O"
   ],
   "silver-chloride": [
     "AgNO₃ + HCl → AgCl↓ + HNO₃",
-    "2AgNO₃ + BaCl₂ → 2AgCl↓ + Ba(NO₃)₂"
+    "2AgNO₃ + BaCl₂ → 2AgCl↓ + Ba(NO₃)₂",
+    "3AgNO₃ + AlCl₃ → 3AgCl↓ + Al(NO₃)₃",
+    "AgNO₃ + NH₄Cl → AgCl↓ + NH₄NO₃"
   ],
   "silver-iodide": ["AgNO₃ + KI → AgI↓ + KNO₃"],
   "silver-sulfide": ["2AgNO₃ + Na₂S → Ag₂S↓ + 2NaNO₃"],
@@ -1160,15 +1743,35 @@ const REACTION_MOLECULAR_EQUATIONS = {
     "2AgNO₃ + Ca(OH)₂ → Ag₂O↓ + Ca(NO₃)₂ + H₂O"
   ],
   "silver-oxide-chloride-transition": ["Ag₂O↓ + 2HCl → 2AgCl↓ + H₂O"],
-  "acid-dissolves-silver-oxide": ["Ag₂O↓ + H₂SO₄ → Ag₂SO₄ + H₂O"],
+  "acid-dissolves-silver-oxide": [
+    "Ag₂O↓ + H₂SO₄ → Ag₂SO₄ + H₂O",
+    "Ag₂O↓ + 2HNO₃ → 2AgNO₃ + H₂O"
+  ],
   "silver-carbonate": ["2AgNO₃ + Li₂CO₃ → Ag₂CO₃↓ + 2LiNO₃"],
   "silver-carbonate-chloride-transition": ["Ag₂CO₃↓ + 2HCl → 2AgCl↓ + H₂O + CO₂↑"],
-  "barium-sulfate": ["BaCl₂ + H₂SO₄ → BaSO₄↓ + 2HCl"],
-  "calcium-sulfate": ["Ca(OH)₂ + H₂SO₄ → CaSO₄↓ + 2H₂O"],
+  "acid-dissolves-silver-phosphate": [
+    "Ag₃PO₄↓ + 3HNO₃ → 3AgNO₃ + H₃PO₄",
+    "2Ag₃PO₄↓ + 3H₂SO₄ → 3Ag₂SO₄ + 2H₃PO₄"
+  ],
+  "acid-dissolves-silver-carbonate": [
+    "Ag₂CO₃↓ + 2HNO₃ → 2AgNO₃ + H₂O + CO₂↑",
+    "Ag₂CO₃↓ + H₂SO₄ → Ag₂SO₄ + H₂O + CO₂↑"
+  ],
+  "barium-sulfate": [
+    "BaCl₂ + H₂SO₄ → BaSO₄↓ + 2HCl",
+    "BaCl₂ + ZnSO₄ → BaSO₄↓ + ZnCl₂"
+  ],
+  "calcium-sulfate": [
+    "Ca(OH)₂ + H₂SO₄ → CaSO₄↓ + 2H₂O",
+    "Ca(NO₃)₂ + H₂SO₄ → CaSO₄↓ + 2HNO₃",
+    "Ca(OH)₂ + ZnSO₄ → CaSO₄↓ + Zn(OH)₂↓",
+    "Ca(NO₃)₂ + ZnSO₄ → CaSO₄↓ + Zn(NO₃)₂"
+  ],
   "barium-carbonate": ["BaCl₂ + Li₂CO₃ → BaCO₃↓ + 2LiCl"],
   "acid-dissolves-barium-carbonate": [
     "BaCO₃↓ + 2HCl → BaCl₂ + H₂O + CO₂↑",
-    "BaCO₃↓ + H₂SO₄ → BaSO₄↓ + H₂O + CO₂↑"
+    "BaCO₃↓ + H₂SO₄ → BaSO₄↓ + H₂O + CO₂↑",
+    "BaCO₃↓ + 2HNO₃ → Ba(NO₃)₂ + H₂O + CO₂↑"
   ],
   "copper-hydroxide": [
     "Cu(NO₃)₂ + 2KOH → Cu(OH)₂↓ + 2KNO₃",
@@ -1176,22 +1779,26 @@ const REACTION_MOLECULAR_EQUATIONS = {
   ],
   "acid-dissolves-copper-hydroxide": [
     "Cu(OH)₂↓ + 2HCl → CuCl₂ + 2H₂O",
-    "Cu(OH)₂↓ + H₂SO₄ → CuSO₄ + 2H₂O"
+    "Cu(OH)₂↓ + H₂SO₄ → CuSO₄ + 2H₂O",
+    "Cu(OH)₂↓ + 2HNO₃ → Cu(NO₃)₂ + 2H₂O"
   ],
   "copper-phosphate": ["3Cu(NO₃)₂ + 2Na₃PO₄ → Cu₃(PO₄)₂↓ + 6NaNO₃"],
   "acid-dissolves-copper-phosphate": [
     "Cu₃(PO₄)₂↓ + 6HCl → 3CuCl₂ + 2H₃PO₄",
-    "Cu₃(PO₄)₂↓ + 3H₂SO₄ → 3CuSO₄ + 2H₃PO₄"
+    "Cu₃(PO₄)₂↓ + 3H₂SO₄ → 3CuSO₄ + 2H₃PO₄",
+    "Cu₃(PO₄)₂↓ + 6HNO₃ → 3Cu(NO₃)₂ + 2H₃PO₄"
   ],
   "copper-carbonate": ["2Cu(NO₃)₂ + 2Li₂CO₃ + H₂O → Cu₂(OH)₂CO₃↓ + 4LiNO₃ + CO₂↑"],
   "acid-dissolves-copper-carbonate": [
     "Cu₂(OH)₂CO₃↓ + 4HCl → 2CuCl₂ + 3H₂O + CO₂↑",
-    "Cu₂(OH)₂CO₃↓ + 2H₂SO₄ → 2CuSO₄ + 3H₂O + CO₂↑"
+    "Cu₂(OH)₂CO₃↓ + 2H₂SO₄ → 2CuSO₄ + 3H₂O + CO₂↑",
+    "Cu₂(OH)₂CO₃↓ + 4HNO₃ → 2Cu(NO₃)₂ + 3H₂O + CO₂↑"
   ],
   "copper-silicate": ["Cu(NO₃)₂ + K₂SiO₃ → CuSiO₃↓ + 2KNO₃"],
   "acid-decomposes-copper-silicate": [
     "CuSiO₃↓ + 2HCl → CuCl₂ + H₂SiO₃↓",
-    "CuSiO₃↓ + H₂SO₄ → CuSO₄ + H₂SiO₃↓"
+    "CuSiO₃↓ + H₂SO₄ → CuSO₄ + H₂SiO₃↓",
+    "CuSiO₃↓ + 2HNO₃ → Cu(NO₃)₂ + H₂SiO₃↓"
   ],
   "iron-hydroxide": [
     "FeCl₃ + 3KOH → Fe(OH)₃↓ + 3KCl",
@@ -1199,58 +1806,172 @@ const REACTION_MOLECULAR_EQUATIONS = {
   ],
   "acid-dissolves-iron-hydroxide": [
     "Fe(OH)₃↓ + 3HCl → FeCl₃ + 3H₂O",
-    "2Fe(OH)₃↓ + 3H₂SO₄ → Fe₂(SO₄)₃ + 6H₂O"
+    "2Fe(OH)₃↓ + 3H₂SO₄ → Fe₂(SO₄)₃ + 6H₂O",
+    "Fe(OH)₃↓ + 3HNO₃ → Fe(NO₃)₃ + 3H₂O"
   ],
-  "calcium-carbonate": ["Ca(OH)₂ + Li₂CO₃ → CaCO₃↓ + 2LiOH"],
+  "calcium-carbonate": [
+    "Ca(OH)₂ + Li₂CO₃ → CaCO₃↓ + 2LiOH",
+    "Ca(NO₃)₂ + Li₂CO₃ → CaCO₃↓ + 2LiNO₃"
+  ],
   "acid-dissolves-calcium-carbonate": [
     "CaCO₃↓ + 2HCl → CaCl₂ + H₂O + CO₂↑",
-    "CaCO₃↓ + H₂SO₄ → CaSO₄↓ + H₂O + CO₂↑"
+    "CaCO₃↓ + H₂SO₄ → CaSO₄↓ + H₂O + CO₂↑",
+    "CaCO₃↓ + 2HNO₃ → Ca(NO₃)₂ + H₂O + CO₂↑"
   ],
   "iron-carbonate-hydrolysis": ["2FeCl₃ + 3Li₂CO₃ + 3H₂O → 2Fe(OH)₃↓ + 3CO₂↑ + 6LiCl"],
   "iron-phosphate": ["FeCl₃ + Na₃PO₄ → FePO₄↓ + 3NaCl"],
   "acid-dissolves-iron-phosphate": [
     "FePO₄↓ + 3HCl → FeCl₃ + H₃PO₄",
-    "2FePO₄↓ + 3H₂SO₄ → Fe₂(SO₄)₃ + 2H₃PO₄"
+    "2FePO₄↓ + 3H₂SO₄ → Fe₂(SO₄)₃ + 2H₃PO₄",
+    "FePO₄↓ + 3HNO₃ → Fe(NO₃)₃ + H₃PO₄"
   ],
   "barium-phosphate": ["3BaCl₂ + 2Na₃PO₄ → Ba₃(PO₄)₂↓ + 6NaCl"],
   "acid-dissolves-barium-phosphate": [
     "Ba₃(PO₄)₂↓ + 6HCl → 3BaCl₂ + 2H₃PO₄",
-    "Ba₃(PO₄)₂↓ + 3H₂SO₄ → 3BaSO₄↓ + 2H₃PO₄"
+    "Ba₃(PO₄)₂↓ + 3H₂SO₄ → 3BaSO₄↓ + 2H₃PO₄",
+    "Ba₃(PO₄)₂↓ + 6HNO₃ → 3Ba(NO₃)₂ + 2H₃PO₄"
   ],
-  "calcium-phosphate": ["3Ca(OH)₂ + 2Na₃PO₄ → Ca₃(PO₄)₂↓ + 6NaOH"],
+  "calcium-phosphate": [
+    "3Ca(OH)₂ + 2Na₃PO₄ → Ca₃(PO₄)₂↓ + 6NaOH",
+    "3Ca(NO₃)₂ + 2Na₃PO₄ → Ca₃(PO₄)₂↓ + 6NaNO₃"
+  ],
   "acid-dissolves-calcium-phosphate": [
     "Ca₃(PO₄)₂↓ + 6HCl → 3CaCl₂ + 2H₃PO₄",
-    "Ca₃(PO₄)₂↓ + 3H₂SO₄ → 3CaSO₄↓ + 2H₃PO₄"
+    "Ca₃(PO₄)₂↓ + 3H₂SO₄ → 3CaSO₄↓ + 2H₃PO₄",
+    "Ca₃(PO₄)₂↓ + 6HNO₃ → 3Ca(NO₃)₂ + 2H₃PO₄"
   ],
   "barium-silicate": ["BaCl₂ + K₂SiO₃ → BaSiO₃↓ + 2KCl"],
   "acid-decomposes-barium-silicate": [
     "BaSiO₃↓ + 2HCl → BaCl₂ + H₂SiO₃↓",
-    "BaSiO₃↓ + H₂SO₄ → BaSO₄↓ + H₂SiO₃↓"
+    "BaSiO₃↓ + H₂SO₄ → BaSO₄↓ + H₂SiO₃↓",
+    "BaSiO₃↓ + 2HNO₃ → Ba(NO₃)₂ + H₂SiO₃↓"
   ],
-  "calcium-silicate": ["Ca(OH)₂ + K₂SiO₃ → CaSiO₃↓ + 2KOH"],
+  "calcium-silicate": [
+    "Ca(OH)₂ + K₂SiO₃ → CaSiO₃↓ + 2KOH",
+    "Ca(NO₃)₂ + K₂SiO₃ → CaSiO₃↓ + 2KNO₃"
+  ],
   "acid-decomposes-calcium-silicate": [
     "CaSiO₃↓ + 2HCl → CaCl₂ + H₂SiO₃↓",
-    "CaSiO₃↓ + H₂SO₄ → CaSO₄↓ + H₂SiO₃↓"
+    "CaSiO₃↓ + H₂SO₄ → CaSO₄↓ + H₂SiO₃↓",
+    "CaSiO₃↓ + 2HNO₃ → Ca(NO₃)₂ + H₂SiO₃↓"
   ],
   "copper-sulfide": ["Cu(NO₃)₂ + Na₂S → CuS↓ + 2NaNO₃"],
   "iron-iodide-redox": ["2FeCl₃ + 2KI → 2FeCl₂ + I₂ + 2KCl"],
   "copper-iodide-redox": ["2Cu(NO₃)₂ + 4KI → 2CuI↓ + I₂ + 4KNO₃"],
+  "ammonium-base-reaction": [
+    "NH₄Cl + KOH → NH₃↑ + KCl + H₂O",
+    "2NH₄Cl + Ca(OH)₂ → 2NH₃↑ + CaCl₂ + 2H₂O"
+  ],
+  "aluminum-hydroxide": [
+    "AlCl₃ + 3KOH → Al(OH)₃↓ + 3KCl",
+    "2AlCl₃ + 3Ca(OH)₂ → 2Al(OH)₃↓ + 3CaCl₂"
+  ],
+  "aluminum-hydroxide-dissolves-in-alkali": [
+    "AlCl₃ + 4KOH → K[Al(OH)₄] + 3KCl",
+    "Al(OH)₃↓ + KOH → K[Al(OH)₄]"
+  ],
+  "acid-dissolves-aluminum-hydroxide": [
+    "Al(OH)₃↓ + 3HCl → AlCl₃ + 3H₂O",
+    "2Al(OH)₃↓ + 3H₂SO₄ → Al₂(SO₄)₃ + 6H₂O",
+    "Al(OH)₃↓ + 3HNO₃ → Al(NO₃)₃ + 3H₂O"
+  ],
+  "aluminum-carbonate-hydrolysis": [
+    "2AlCl₃ + 3Li₂CO₃ + 3H₂O → 2Al(OH)₃↓ + 6LiCl + 3CO₂↑"
+  ],
+  "aluminum-phosphate": ["AlCl₃ + Na₃PO₄ → AlPO₄↓ + 3NaCl"],
+  "acid-dissolves-aluminum-phosphate": [
+    "AlPO₄↓ + 3HCl → AlCl₃ + H₃PO₄",
+    "2AlPO₄↓ + 3H₂SO₄ → Al₂(SO₄)₃ + 2H₃PO₄",
+    "AlPO₄↓ + 3HNO₃ → Al(NO₃)₃ + H₃PO₄"
+  ],
+  "aluminum-sulfide-hydrolysis": [
+    "2AlCl₃ + 3Na₂S + 6H₂O → 2Al(OH)₃↓ + 6NaCl + 3H₂S↑"
+  ],
+  "zinc-hydroxide": [
+    "ZnSO₄ + 2KOH → Zn(OH)₂↓ + K₂SO₄",
+    "ZnSO₄ + Ca(OH)₂ → Zn(OH)₂↓ + CaSO₄↓"
+  ],
+  "zinc-hydroxide-dissolves-in-alkali": [
+    "ZnSO₄ + 4KOH → K₂[Zn(OH)₄] + K₂SO₄",
+    "Zn(OH)₂↓ + 2KOH → K₂[Zn(OH)₄]"
+  ],
+  "acid-dissolves-zinc-hydroxide": [
+    "Zn(OH)₂↓ + 2HCl → ZnCl₂ + 2H₂O",
+    "Zn(OH)₂↓ + H₂SO₄ → ZnSO₄ + 2H₂O",
+    "Zn(OH)₂↓ + 2HNO₃ → Zn(NO₃)₂ + 2H₂O"
+  ],
+  "zinc-phosphate": ["3ZnSO₄ + 2Na₃PO₄ → Zn₃(PO₄)₂↓ + 3Na₂SO₄"],
+  "acid-dissolves-zinc-phosphate": [
+    "Zn₃(PO₄)₂↓ + 6HCl → 3ZnCl₂ + 2H₃PO₄",
+    "Zn₃(PO₄)₂↓ + 3H₂SO₄ → 3ZnSO₄ + 2H₃PO₄",
+    "Zn₃(PO₄)₂↓ + 6HNO₃ → 3Zn(NO₃)₂ + 2H₃PO₄"
+  ],
+  "zinc-carbonate": ["ZnSO₄ + Li₂CO₃ → ZnCO₃↓ + Li₂SO₄"],
+  "acid-dissolves-zinc-carbonate": [
+    "ZnCO₃↓ + 2HCl → ZnCl₂ + H₂O + CO₂↑",
+    "ZnCO₃↓ + H₂SO₄ → ZnSO₄ + H₂O + CO₂↑",
+    "ZnCO₃↓ + 2HNO₃ → Zn(NO₃)₂ + H₂O + CO₂↑"
+  ],
+  "zinc-silicate": ["ZnSO₄ + K₂SiO₃ → ZnSiO₃↓ + K₂SO₄"],
+  "acid-decomposes-zinc-silicate": [
+    "ZnSiO₃↓ + 2HCl → ZnCl₂ + H₂SiO₃↓",
+    "ZnSiO₃↓ + H₂SO₄ → ZnSO₄ + H₂SiO₃↓",
+    "ZnSiO₃↓ + 2HNO₃ → Zn(NO₃)₂ + H₂SiO₃↓"
+  ],
+  "zinc-sulfide": ["ZnSO₄ + Na₂S → ZnS↓ + Na₂SO₄"],
+  "nickel-hydroxide": [
+    "Ni(NO₃)₂ + 2KOH → Ni(OH)₂↓ + 2KNO₃",
+    "Ni(NO₃)₂ + Ca(OH)₂ → Ni(OH)₂↓ + Ca(NO₃)₂"
+  ],
+  "acid-dissolves-nickel-hydroxide": [
+    "Ni(OH)₂↓ + 2HCl → NiCl₂ + 2H₂O",
+    "Ni(OH)₂↓ + H₂SO₄ → NiSO₄ + 2H₂O",
+    "Ni(OH)₂↓ + 2HNO₃ → Ni(NO₃)₂ + 2H₂O"
+  ],
+  "nickel-phosphate": ["3Ni(NO₃)₂ + 2Na₃PO₄ → Ni₃(PO₄)₂↓ + 6NaNO₃"],
+  "acid-dissolves-nickel-phosphate": [
+    "Ni₃(PO₄)₂↓ + 6HCl → 3NiCl₂ + 2H₃PO₄",
+    "Ni₃(PO₄)₂↓ + 3H₂SO₄ → 3NiSO₄ + 2H₃PO₄",
+    "Ni₃(PO₄)₂↓ + 6HNO₃ → 3Ni(NO₃)₂ + 2H₃PO₄"
+  ],
+  "nickel-carbonate": ["Ni(NO₃)₂ + Li₂CO₃ → NiCO₃↓ + 2LiNO₃"],
+  "acid-dissolves-nickel-carbonate": [
+    "NiCO₃↓ + 2HCl → NiCl₂ + H₂O + CO₂↑",
+    "NiCO₃↓ + H₂SO₄ → NiSO₄ + H₂O + CO₂↑",
+    "NiCO₃↓ + 2HNO₃ → Ni(NO₃)₂ + H₂O + CO₂↑"
+  ],
+  "nickel-silicate": ["Ni(NO₃)₂ + K₂SiO₃ → NiSiO₃↓ + 2KNO₃"],
+  "acid-decomposes-nickel-silicate": [
+    "NiSiO₃↓ + 2HCl → NiCl₂ + H₂SiO₃↓",
+    "NiSiO₃↓ + H₂SO₄ → NiSO₄ + H₂SiO₃↓",
+    "NiSiO₃↓ + 2HNO₃ → Ni(NO₃)₂ + H₂SiO₃↓"
+  ],
+  "nickel-sulfide": ["Ni(NO₃)₂ + Na₂S → NiS↓ + 2NaNO₃"],
   "acid-carbonate": [
     "Li₂CO₃ + 2HCl → 2LiCl + H₂O + CO₂↑",
-    "Li₂CO₃ + H₂SO₄ → Li₂SO₄ + H₂O + CO₂↑"
+    "Li₂CO₃ + H₂SO₄ → Li₂SO₄ + H₂O + CO₂↑",
+    "Li₂CO₃ + 2HNO₃ → 2LiNO₃ + H₂O + CO₂↑"
   ],
   "acid-sulfide": [
     "Na₂S + 2HCl → 2NaCl + H₂S↑",
-    "Na₂S + H₂SO₄ → Na₂SO₄ + H₂S↑"
+    "Na₂S + H₂SO₄ → Na₂SO₄ + H₂S↑",
+    "Na₂S + 2HNO₃ → 2NaNO₃ + H₂S↑"
   ],
   "acid-silicate": [
     "K₂SiO₃ + 2HCl → 2KCl + H₂SiO₃↓",
-    "K₂SiO₃ + H₂SO₄ → K₂SO₄ + H₂SiO₃↓"
+    "K₂SiO₃ + H₂SO₄ → K₂SO₄ + H₂SiO₃↓",
+    "K₂SiO₃ + 2HNO₃ → 2KNO₃ + H₂SiO₃↓"
   ],
   "permanganate-iodide-neutral": ["2KMnO₄ + 6KI + 4H₂O → 2MnO₂↓ + 3I₂ + 8KOH"],
-  "permanganate-iodide-acid": ["2KMnO₄ + 10KI + 8H₂SO₄ → 2MnSO₄ + 6K₂SO₄ + 5I₂ + 8H₂O"],
+  "permanganate-iodide-acid": [
+    "2KMnO₄ + 10KI + 8H₂SO₄ → 2MnSO₄ + 6K₂SO₄ + 5I₂ + 8H₂O",
+    "2KMnO₄ + 10KI + 16HNO₃ → 2Mn(NO₃)₂ + 12KNO₃ + 5I₂ + 8H₂O"
+  ],
   "permanganate-peroxide-neutral": ["2KMnO₄ + 3H₂O₂ → 2MnO₂↓ + 3O₂↑ + 2KOH + 2H₂O"],
-  "permanganate-peroxide-acid": ["2KMnO₄ + 5H₂O₂ + 3H₂SO₄ → K₂SO₄ + 2MnSO₄ + 8H₂O + 5O₂↑"]
+  "permanganate-peroxide-acid": [
+    "2KMnO₄ + 5H₂O₂ + 3H₂SO₄ → K₂SO₄ + 2MnSO₄ + 8H₂O + 5O₂↑",
+    "2KMnO₄ + 5H₂O₂ + 6HNO₃ → 2Mn(NO₃)₂ + 2KNO₃ + 8H₂O + 5O₂↑"
+  ]
 };
 
 init();
@@ -3030,11 +3751,35 @@ function formatContentsText(reagents) {
 }
 
 function hasAcid(ids) {
-  return hasAny(ids, ["hcl", "h2so4"]);
+  return hasAny(ids, ["hcl", "hno3", "h2so4"]);
 }
 
 function hasBase(ids) {
   return hasAny(ids, ["koh", "li2co3", "na3po4", "k2sio3", "na2s", "ca_oh_2"]);
+}
+
+function hasChlorideSource(ids) {
+  return hasAny(ids, ["hcl", "bacl2", "fecl3", "alcl3", "nh4cl"]);
+}
+
+function hasSulfateSource(ids) {
+  return hasAny(ids, ["h2so4", "znso4"]);
+}
+
+function hasCalciumSource(ids) {
+  return hasAny(ids, ["ca_oh_2", "ca_no3_2"]);
+}
+
+function hasPermanganateCompatibleAcid(ids) {
+  return hasAny(ids, ["h2so4", "hno3"]);
+}
+
+function countReagent(reagents, reagentId) {
+  return reagents.filter((reagent) => reagent.id === reagentId).length;
+}
+
+function hasExcessKoh(reagents) {
+  return countReagent(reagents, "koh") >= 2;
 }
 
 function hasAny(ids, candidates) {

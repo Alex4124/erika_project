@@ -10,106 +10,165 @@
     <div class="app-shell">
       <canvas id="lab-canvas" width="1600" height="1000" aria-hidden="true"></canvas>
       <canvas id="lab-canvas-bg" width="1600" height="1000" aria-hidden="true"></canvas>
+
       <main class="lab-stage">
         <header class="hero-panel">
-          <div>
-            <p class="eyebrow">Виртуальная лаборатория</p>
-            <h1>Смешивание растворов и наблюдение признаков реакций</h1>
+          <div class="hero-copy">
+            <p class="eyebrow">Chemistry Lab Dashboard</p>
+            <h1>Современная учебная лаборатория для наблюдения химических реакций</h1>
+            <p class="hero-description">
+              Смешивайте растворы, отслеживайте визуальные признаки реакций и сразу сравнивайте наблюдения с журналом и
+              уравнениями.
+            </p>
           </div>
-          <div class="hero-actions">
-            <button id="reset-all-btn" class="secondary-button">Очистить все пробирки</button>
+
+          <div class="hero-metrics">
+            <article class="hero-metric">
+              <p class="metric-label">Режим работы</p>
+              <strong>Перетаскивание и точечное добавление</strong>
+              <span>Стакан можно перенести в пробирку или выбрать кликом.</span>
+            </article>
+
+            <article class="hero-metric hero-metric-selected">
+              <p class="metric-label">Выбранный реагент</p>
+              <strong id="selected-reagent">Ничего не выбрано</strong>
+              <span>Активный реагент подсвечивается и готов к добавлению.</span>
+            </article>
+
+            <button id="reset-all-btn" class="primary-button hero-reset" type="button">Очистить все пробирки</button>
           </div>
         </header>
 
         <section class="workspace">
           <aside class="reagent-panel">
-            <div class="panel-header">
-              <h2>Стаканы с реагентами</h2>
-              <p>Перетаскивайте стакан в пробирку или выберите стакан кликом и затем кликните по пробирке.</p>
+            <div class="panel-chrome">
+              <p class="panel-kicker">Reagent Library</p>
+              <div class="panel-header">
+                <div>
+                  <h2>Левая панель реагентов</h2>
+                  <p>Чистые карточки с формулой, цветом раствора и быстрым доступом к справке по веществу.</p>
+                </div>
+              </div>
             </div>
+
+            <div class="panel-pills" aria-hidden="true">
+              <span class="panel-pill">Водные растворы</span>
+              <span class="panel-pill">Drag &amp; click</span>
+            </div>
+
             <div id="reagent-grid" class="reagent-grid" aria-label="Набор реагентов"></div>
           </aside>
 
           <section class="experiment-panel">
-            <div class="panel-header">
-              <h2>Пробирки</h2>
-              <p>Реакции сопровождаются изменением цвета, осадком, пузырьками газа и тепловыми эффектами.</p>
+            <div class="panel-chrome panel-chrome-wide">
+              <p class="panel-kicker">Experiment Bench</p>
+              <div class="panel-header">
+                <div>
+                  <h2>Центральная экспериментальная зона</h2>
+                  <p>Крупные пробирки и стеклянные поверхности помогают легче считывать признаки реакции.</p>
+                </div>
+              </div>
             </div>
-            <div id="tube-rack" class="tube-rack" aria-label="Штатив с пробирками"></div>
-          </section>
-        </section>
 
-        <section class="status-strip">
-          <div class="status-card">
-            <p class="status-title">Выбранный реагент</p>
-            <p id="selected-reagent" class="status-value">Ничего не выбрано</p>
-          </div>
-          <div class="status-card drawer-hint-card">
-            <p class="status-title">Выдвижные вкладки</p>
-            <p class="drawer-hint-copy">Откройте вкладки справа: в них показываются журнал наблюдений и уравнения реакций для каждой пробирки.</p>
-          </div>
+            <div class="status-strip">
+              <article class="status-card status-card-highlight">
+                <p class="status-title">Как работать</p>
+                <p class="status-value">Перетащите стакан в пробирку или выберите реагент и затем нажмите на нужную пробирку.</p>
+              </article>
+
+              <article class="status-card">
+                <p class="status-title">Что отслеживать</p>
+                <p class="status-value">Изменение цвета, выпадение осадка, газ, нагрев и другие визуальные эффекты.</p>
+              </article>
+
+              <article class="status-card">
+                <p class="status-title">Правая консоль</p>
+                <p class="status-value">Журнал наблюдений и уравнения реакций всегда доступны в соседней панели.</p>
+              </article>
+            </div>
+
+            <div class="experiment-zone">
+              <div class="experiment-zone-header">
+                <div>
+                  <p class="experiment-kicker">Reaction Rack</p>
+                  <h3>Штатив с пробирками</h3>
+                </div>
+                <p class="experiment-zone-copy">Визуальные эффекты синхронизированы с текущим составом каждой пробирки.</p>
+              </div>
+
+              <div id="tube-rack" class="tube-rack" aria-label="Штатив с пробирками"></div>
+            </div>
+          </section>
+
+          <aside id="slideout-drawer" class="slideout-drawer" aria-label="Правая лабораторная консоль">
+            <div class="slideout-shell">
+              <div class="slideout-header">
+                <div class="slideout-heading">
+                  <p id="drawer-kicker" class="slideout-kicker">Правая консоль</p>
+                  <h2 id="drawer-title" class="slideout-title">Уравнения реакций</h2>
+                </div>
+                <button id="drawer-close-btn" class="slideout-close" type="button">Свернуть</button>
+              </div>
+
+              <div class="slideout-tabs" role="tablist" aria-label="Панели лаборатории">
+                <button
+                  id="drawer-tab-equations"
+                  class="slideout-tab"
+                  type="button"
+                  data-drawer-tab="equations"
+                  role="tab"
+                  aria-controls="drawer-panel-equations"
+                  aria-selected="true"
+                >
+                  Уравнения
+                </button>
+                <button
+                  id="drawer-tab-journal"
+                  class="slideout-tab"
+                  type="button"
+                  data-drawer-tab="journal"
+                  role="tab"
+                  aria-controls="drawer-panel-journal"
+                  aria-selected="false"
+                >
+                  Журнал
+                </button>
+              </div>
+
+              <div class="slideout-body">
+                <section
+                  id="drawer-panel-equations"
+                  class="slideout-panel"
+                  data-drawer-panel="equations"
+                  role="tabpanel"
+                  aria-labelledby="drawer-tab-equations"
+                >
+                  <p class="slideout-description">
+                    Показываются молекулярные и ионные уравнения для реакций, которые сейчас зафиксированы в каждой
+                    пробирке.
+                  </p>
+                  <div id="equation-feed" class="equation-feed"></div>
+                </section>
+
+                <section
+                  id="drawer-panel-journal"
+                  class="slideout-panel"
+                  data-drawer-panel="journal"
+                  role="tabpanel"
+                  aria-labelledby="drawer-tab-journal"
+                  hidden
+                >
+                  <p class="slideout-description">
+                    Журнал фиксирует добавление реагентов, выпадение осадков, изменение цвета и другие наблюдения по ходу
+                    опыта.
+                  </p>
+                  <div id="event-feed" class="event-feed event-feed-drawer"></div>
+                </section>
+              </div>
+            </div>
+          </aside>
         </section>
       </main>
-
-      <aside id="slideout-drawer" class="slideout-drawer" aria-label="Выдвижные вкладки">
-        <div class="slideout-tabs" role="tablist" aria-label="Панели лаборатории">
-          <button
-            id="drawer-tab-equations"
-            class="slideout-tab"
-            type="button"
-            data-drawer-tab="equations"
-            role="tab"
-            aria-controls="drawer-panel-equations"
-            aria-selected="false"
-          >
-            Уравнения
-          </button>
-          <button
-            id="drawer-tab-journal"
-            class="slideout-tab"
-            type="button"
-            data-drawer-tab="journal"
-            role="tab"
-            aria-controls="drawer-panel-journal"
-            aria-selected="false"
-          >
-            Журнал
-          </button>
-        </div>
-
-        <div class="slideout-body">
-          <div class="slideout-header">
-            <div class="slideout-heading">
-              <p id="drawer-kicker" class="slideout-kicker">Выдвижная вкладка</p>
-              <h2 id="drawer-title" class="slideout-title">Уравнения реакций</h2>
-            </div>
-            <button id="drawer-close-btn" class="slideout-close" type="button">Свернуть</button>
-          </div>
-
-          <section
-            id="drawer-panel-equations"
-            class="slideout-panel"
-            data-drawer-panel="equations"
-            role="tabpanel"
-            aria-labelledby="drawer-tab-equations"
-          >
-            <p class="slideout-description">Показаны молекулярные и ионные уравнения реакций, которые сейчас определены для каждой пробирки.</p>
-            <div id="equation-feed" class="equation-feed"></div>
-          </section>
-
-          <section
-            id="drawer-panel-journal"
-            class="slideout-panel"
-            data-drawer-panel="journal"
-            role="tabpanel"
-            aria-labelledby="drawer-tab-journal"
-            hidden
-          >
-            <p class="slideout-description">В журнале фиксируются добавление реагентов, появление осадков, изменения цвета и другие наблюдения.</p>
-            <div id="event-feed" class="event-feed event-feed-drawer"></div>
-          </section>
-        </div>
-      </aside>
     </div>
 
     <script type="module" src="./app.js"></script>

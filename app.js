@@ -569,7 +569,7 @@ const drawerTitle = document.querySelector("#drawer-title");
 const drawerCloseButton = document.querySelector("#drawer-close-btn");
 const drawerTabs = Array.from(document.querySelectorAll("[data-drawer-tab]"));
 const drawerPanels = Array.from(document.querySelectorAll("[data-drawer-panel]"));
-const scenePanels = Array.from(document.querySelectorAll(".hero-panel, .reagent-panel, .experiment-panel, .status-card"));
+const scenePanels = Array.from(document.querySelectorAll(".hero-panel, .reagent-panel, .experiment-panel, .status-card, .slideout-drawer"));
 const heroPanel = document.querySelector(".hero-panel");
 const reagentPanel = document.querySelector(".reagent-panel");
 const experimentPanel = document.querySelector(".experiment-panel");
@@ -588,7 +588,7 @@ const state = {
   selectedReagentId: null,
   notifications: [],
   drawer: {
-    open: false,
+    open: true,
     panel: "equations"
   },
   dragging: null,
@@ -2065,7 +2065,13 @@ function init() {
   drawerTabs.forEach((tab) => {
     tab.addEventListener("click", () => toggleDrawer(tab.dataset.drawerTab));
   });
-  drawerCloseButton.addEventListener("click", closeDrawer);
+  drawerCloseButton.addEventListener("click", () => {
+    if (state.drawer.open) {
+      closeDrawer();
+      return;
+    }
+    toggleDrawer(state.drawer.panel);
+  });
   resetAllButton.addEventListener("click", () => {
     state.notifications = [];
     renderJournalFeed();
@@ -2104,17 +2110,24 @@ function buildReagentCards() {
     const card = document.createElement("article");
     card.className = "reagent-card";
     card.dataset.reagentId = reagent.id;
+    card.dataset.reagentTone = getReagentTone(reagent);
     card.setAttribute("aria-label", reagent.name);
     card.setAttribute("aria-describedby", tooltipId);
     card.tabIndex = 0;
     card.innerHTML = `
+      <div class="reagent-card-topline">
+        <span class="reagent-chip reagent-chip-emphasis">${getReagentFamilyLabel(reagent)}</span>
+        <span class="reagent-chip">${getReagentAppearanceLabel(reagent)}</span>
+      </div>
       <div class="reagent-card-header">
         <h3>${reagent.name}</h3>
         <span class="formula">${reagent.formula}</span>
       </div>
-      <div class="beaker">
-        <div class="liquid-fill"></div>
-        <div class="liquid-meniscus"></div>
+      <div class="reagent-vessel">
+        <div class="beaker">
+          <div class="liquid-fill"></div>
+          <div class="liquid-meniscus"></div>
+        </div>
       </div>
       <p class="reagent-description">${reagent.description}</p>
       ${getReagentTooltipMarkup(reagent, tooltipId)}
@@ -2135,15 +2148,27 @@ function buildTubeRack() {
   tubeRack.innerHTML = "";
   tubeElements.clear();
   tubeRenderElements.clear();
-  state.tubes.forEach((tube) => {
+  state.tubes.forEach((tube, index) => {
     evaluateTube(tube);
     const card = document.createElement("article");
     card.className = "tube-card";
     card.dataset.tubeId = tube.id;
     card.setAttribute("aria-label", tube.label);
     card.innerHTML = `
-      <h3>${tube.label}</h3>
-      <div class="tube-glass">
+      <div class="tube-card-header">
+        <div class="tube-heading">
+          <p class="tube-kicker">Эксперимент ${index + 1}</p>
+          <h3>${tube.label}</h3>
+        </div>
+        <div class="tube-card-actions">
+          <span class="tube-badge">Пусто</span>
+          <button class="clear-tube-button" type="button">Очистить</button>
+        </div>
+      </div>
+      <div class="tube-stage">
+        <div class="tube-stand" aria-hidden="true"></div>
+        <div class="tube-scale" aria-hidden="true"></div>
+        <div class="tube-glass">
         <div class="tube-liquid-wrap">
           <div class="tube-liquid">
             <div class="tube-overlay"></div>
@@ -2157,6 +2182,7 @@ function buildTubeRack() {
             <div class="tube-flash"></div>
           </div>
         </div>
+      </div>
       </div>
       <div class="tube-meta">
         <p class="tube-note"></p>
@@ -2197,7 +2223,8 @@ function buildTubeRack() {
       heat: card.querySelector(".tube-heat"),
       flash: card.querySelector(".tube-flash"),
       note: card.querySelector(".tube-note"),
-      contents: card.querySelector(".tube-contents")
+      contents: card.querySelector(".tube-contents"),
+      badge: card.querySelector(".tube-badge")
     };
     ensurePool(renderElements.fallout, "fallout-particle", FALLOUT_POOL_SIZE);
     ensurePool(renderElements.bubbles, "bubble", BUBBLE_POOL_SIZE);
@@ -2221,6 +2248,55 @@ function applyLiquidStyle(element, reagent) {
   element.style.setProperty("--clarity", reagent.clarity.toFixed(2));
   element.style.setProperty("--texture-opacity", (reagent.textureOpacity * 0.72).toFixed(2));
   element.style.setProperty("--sediment-opacity", (reagent.sedimentOpacity * 0.72).toFixed(2));
+}
+
+function getReagentFamilyLabel(reagent) {
+  if (reagent.tags.includes("indicator")) {
+    return "Индикатор";
+  }
+  if (reagent.tags.includes("acid")) {
+    return "Кислота";
+  }
+  if (reagent.tags.includes("base")) {
+    return "Основание";
+  }
+  if (reagent.tags.includes("oxidizer")) {
+    return "Окислитель";
+  }
+  return "Соль";
+}
+
+function getReagentAppearanceLabel(reagent) {
+  if (reagent.tags.includes("viscous")) {
+    return "Вязкий";
+  }
+  if (reagent.tags.includes("suspension") || reagent.sedimentOpacity > 0.12 || reagent.clarity < 0.58) {
+    return "Мутный";
+  }
+  const channelSpread = Math.max(...reagent.color) - Math.min(...reagent.color);
+  if (channelSpread > 42 || reagent.alpha > 0.68) {
+    return "Окрашенный";
+  }
+  return "Прозрачный";
+}
+
+function getReagentTone(reagent) {
+  if (reagent.tags.includes("indicator")) {
+    return "indicator";
+  }
+  if (reagent.tags.includes("acid")) {
+    return "acid";
+  }
+  if (reagent.tags.includes("base")) {
+    return "base";
+  }
+  if (reagent.tags.includes("oxidizer")) {
+    return "oxidizer";
+  }
+  if (reagent.tags.includes("suspension")) {
+    return "suspension";
+  }
+  return "salt";
 }
 
 function getReagentTooltipMarkup(reagent, tooltipId) {
@@ -2331,9 +2407,12 @@ function renderDrawer() {
   const meta = DRAWER_META[state.drawer.panel];
   slideoutDrawer.classList.toggle("is-open", state.drawer.open);
   slideoutDrawer.dataset.panel = state.drawer.panel;
+  slideoutDrawer.setAttribute("aria-expanded", state.drawer.open ? "true" : "false");
   drawerKicker.textContent = meta.kicker;
   drawerKicker.hidden = !meta.kicker;
   drawerTitle.textContent = meta.title;
+  drawerCloseButton.textContent = state.drawer.open ? "Свернуть" : "Развернуть";
+  drawerCloseButton.setAttribute("aria-label", state.drawer.open ? "Свернуть правую панель" : "Развернуть правую панель");
   drawerTabs.forEach((tab) => {
     const isActive = tab.dataset.drawerTab === state.drawer.panel;
     tab.classList.toggle("is-active", isActive);
@@ -2417,13 +2496,19 @@ function createDragGhost(reagent) {
   wrapper.className = "drag-ghost";
   wrapper.innerHTML = `
     <article class="reagent-card">
+      <div class="reagent-card-topline">
+        <span class="reagent-chip reagent-chip-emphasis">${getReagentFamilyLabel(reagent)}</span>
+        <span class="reagent-chip">${getReagentAppearanceLabel(reagent)}</span>
+      </div>
       <div class="reagent-card-header">
         <h3>${reagent.name}</h3>
         <span class="formula">${reagent.formula}</span>
       </div>
-      <div class="beaker">
-        <div class="liquid-fill"></div>
-        <div class="liquid-meniscus"></div>
+      <div class="reagent-vessel">
+        <div class="beaker">
+          <div class="liquid-fill"></div>
+          <div class="liquid-meniscus"></div>
+        </div>
       </div>
     </article>
   `;
@@ -2787,7 +2872,8 @@ function renderTube(tube) {
     heat,
     flash,
     note,
-    contents
+    contents,
+    badge
   } = renderElements;
   const volumeRatio = tube.contents.length ? clamp(0.14 + tube.contents.length * 0.12, 0.14, 0.86) : 0.02;
   const gasIntensity = clamp(getActiveEffectIntensity(tube, "gas") * 1.36, 0, 1.28);
@@ -2851,7 +2937,10 @@ function renderTube(tube) {
   flash.style.setProperty("--flash-opacity", clamp(flashIntensity + reactionGlow * 0.12, 0, 1).toFixed(2));
   note.textContent = tube.lastReactionSummary;
   contents.textContent = tube.analysis.contentsText;
+  badge.textContent = tube.contents.length ? getPHLabel(tube.analysis.pHCategory) : "Пусто";
   card.classList.toggle("is-empty", tube.contents.length === 0);
+  card.classList.toggle("has-reaction", tube.analysis.reactions.length > 0);
+  card.dataset.phCategory = tube.contents.length ? tube.analysis.pHCategory : "empty";
 
   renderFallout(tube, fallout, precipitationFallProgress);
   renderDissolve(tube, dissolve, dissolveEffect, precipitateVisual, dissolveIntensity);
@@ -3358,6 +3447,13 @@ function drawCanvasPanels() {
     ctx.fillStyle = "#edf7fb";
     ctx.font = "600 20px Cambria, Georgia, serif";
     ctx.fillText("Пробирки", experimentPanelRect.x + 16, experimentPanelRect.y + 28);
+  }
+
+  const drawerRect = slideoutDrawer ? getCachedRect(slideoutDrawer, "panel-drawer") : null;
+  if (drawerRect) {
+    ctx.fillStyle = "#edf7fb";
+    ctx.font = "600 20px Cambria, Georgia, serif";
+    ctx.fillText("Журнал и уравнения", drawerRect.x + 16, drawerRect.y + 28);
   }
 }
 

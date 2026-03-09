@@ -98,3 +98,15 @@ Original prompt: Сделай виртуальную лабораторию по
   - required skill-client smoke run: `output/web-game/perf-optimization-skill`;
   - DOM/browser checks via Playwright debug API: `output/web-game/perf-optimization-dom/report.json`, `output/web-game/perf-optimization-dom-precip/report.json`;
   - observed in reports: largest canvas remains `lab-canvas`, gas bubble pool stays fixed at `32`, fallout pool stays fixed at `64`, reactions still resolve for `AgNO3 + KI` and `HCl + Li2CO3`, console errors absent.
+
+- UI redesign pass: realistic chemistry lab dashboard
+  - restructured `index.html` into a three-zone dashboard: left reagent library, central experiment bench, right console for equations/journal;
+  - rebuilt reagent and tube card markup in `app.js` without changing chemistry logic, added dashboard-oriented badges/chips and a persistent right-side console state;
+  - replaced `styles.css` with a new glass-lab visual system: darker lab background, stronger hierarchy, larger tubes, cleaner reagent cards, softer hover/selected states, and responsive fixed-height desktop panels with internal scrolling.
+- Verification after redesign:
+  - `node --check app.js` -> ok;
+  - `npm install` -> ok;
+  - `npm run build` -> ok;
+  - required skill-client run: `output/web-game/lab-dashboard-redesign-skill`, rerun after layout fix: `output/web-game/lab-dashboard-redesign-skill-2`;
+  - DOM screenshots with real interactions: `output/web-game/dom-dashboard-initial-2.png`, `output/web-game/dom-dashboard-reaction-2.png`;
+  - DOM/browser interaction check confirmed `AgNO3 + KI` still produces the yellow `AgI` precipitate and the journal tab updates correctly.

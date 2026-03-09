@@ -2169,25 +2169,24 @@ function buildTubeRack() {
         <div class="tube-stand" aria-hidden="true"></div>
         <div class="tube-scale" aria-hidden="true"></div>
         <div class="tube-glass">
-        <div class="tube-liquid-wrap">
-          <div class="tube-liquid">
-            <div class="tube-overlay"></div>
-            <div class="tube-gel"></div>
-            <div class="tube-precipitate"></div>
-            <div class="tube-fallout"></div>
-            <div class="tube-dissolve"></div>
-            <div class="tube-redox"></div>
-            <div class="tube-bubbles"></div>
-            <div class="tube-heat"></div>
-            <div class="tube-flash"></div>
+          <div class="tube-liquid-wrap">
+            <div class="tube-liquid">
+              <div class="tube-overlay"></div>
+              <div class="tube-gel"></div>
+              <div class="tube-precipitate"></div>
+              <div class="tube-fallout"></div>
+              <div class="tube-dissolve"></div>
+              <div class="tube-redox"></div>
+              <div class="tube-bubbles"></div>
+              <div class="tube-heat"></div>
+              <div class="tube-flash"></div>
+            </div>
           </div>
         </div>
-      </div>
       </div>
       <div class="tube-meta">
         <p class="tube-note"></p>
         <p class="tube-contents"></p>
-        <button class="clear-tube-button" type="button">Очистить пробирку</button>
       </div>
     `;
     card.addEventListener("pointerenter", () => {
@@ -3372,23 +3371,23 @@ function drawCanvasBackground() {
   ctx.clearRect(0, 0, width, height);
 
   const gradient = ctx.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, "#07121b");
-  gradient.addColorStop(0.42, "#0c1d2a");
-  gradient.addColorStop(1, "#102633");
+  gradient.addColorStop(0, "#fcfdff");
+  gradient.addColorStop(0.48, "#f4f7fb");
+  gradient.addColorStop(1, "#edf2f7");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = "rgba(171, 221, 247, 0.06)";
-  for (let index = 0; index < 12; index += 1) {
+  ctx.fillStyle = "rgba(121, 182, 217, 0.08)";
+  for (let index = 0; index < 10; index += 1) {
     ctx.beginPath();
-    ctx.arc(width * 0.88, height * 0.12, 120 + index * 34, 0, Math.PI * 2);
+    ctx.arc(width * 0.88, height * 0.14, 140 + index * 34, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  drawShelf(width, height * 0.28, height * 0.04);
-  drawShelf(width, height * 0.62, height * 0.05);
-  ctx.fillStyle = "rgba(214, 160, 96, 0.16)";
-  ctx.fillRect(0, height - height * 0.18, width, height * 0.18);
+  ctx.fillStyle = "rgba(219, 228, 238, 0.82)";
+  ctx.fillRect(0, height - height * 0.22, width, height * 0.22);
+  drawShelf(width, height * 0.3, height * 0.02);
+  drawShelf(width, height * 0.64, height * 0.024);
 
   drawCanvasPanels();
   drawCanvasReagents();
@@ -3411,47 +3410,47 @@ function drawCanvasScene() {
 
 function drawShelf(width, y, thickness) {
   const shelfGradient = ctx.createLinearGradient(0, y, 0, y + thickness);
-  shelfGradient.addColorStop(0, "rgba(158, 106, 60, 0.34)");
-  shelfGradient.addColorStop(1, "rgba(71, 40, 18, 0.62)");
+  shelfGradient.addColorStop(0, "rgba(218, 225, 233, 0.92)");
+  shelfGradient.addColorStop(1, "rgba(201, 210, 219, 0.96)");
   ctx.fillStyle = shelfGradient;
   ctx.fillRect(0, y, width, thickness);
-  ctx.fillStyle = "rgba(255, 223, 196, 0.08)";
-  ctx.fillRect(0, y, width, 4);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+  ctx.fillRect(0, y, width, Math.max(2, thickness * 0.12));
 }
 
 function drawCanvasPanels() {
   scenePanels.forEach((panel, index) => {
     const rect = getCachedRect(panel, `panel-${index}`);
-    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 26, "rgba(8, 20, 27, 0.7)", "rgba(149, 197, 214, 0.18)");
+    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 26, "rgba(255, 255, 255, 0.94)", "rgba(183, 205, 220, 0.72)");
   });
 
   const hero = heroPanel ? getCachedRect(heroPanel, "panel-hero") : null;
   if (hero) {
-    ctx.fillStyle = "#86d6ff";
+    ctx.fillStyle = "#4e8db0";
     ctx.font = "12px Aptos, Trebuchet MS, sans-serif";
     ctx.fillText("Виртуальная лаборатория", hero.x + 18, hero.y + 24);
-    ctx.fillStyle = "#edf7fb";
-    ctx.font = "600 28px Cambria, Georgia, serif";
-    wrapCanvasText("Смешивание растворов и наблюдение признаков реакций", hero.x + 18, hero.y + 58, hero.width - 240, 30, 2);
+    ctx.fillStyle = "#1f3442";
+    ctx.font = "600 26px Cambria, Georgia, serif";
+    wrapCanvasText("Светлая учебная химическая лаборатория", hero.x + 18, hero.y + 56, hero.width - 230, 28, 2);
   }
 
   const reagentPanelRect = reagentPanel ? getCachedRect(reagentPanel, "panel-reagents") : null;
   if (reagentPanelRect) {
-    ctx.fillStyle = "#edf7fb";
+    ctx.fillStyle = "#1f3442";
     ctx.font = "600 20px Cambria, Georgia, serif";
-    ctx.fillText("Стаканы с реагентами", reagentPanelRect.x + 16, reagentPanelRect.y + 28);
+    ctx.fillText("Панель реагентов", reagentPanelRect.x + 16, reagentPanelRect.y + 28);
   }
 
   const experimentPanelRect = experimentPanel ? getCachedRect(experimentPanel, "panel-experiment") : null;
   if (experimentPanelRect) {
-    ctx.fillStyle = "#edf7fb";
+    ctx.fillStyle = "#1f3442";
     ctx.font = "600 20px Cambria, Georgia, serif";
-    ctx.fillText("Пробирки", experimentPanelRect.x + 16, experimentPanelRect.y + 28);
+    ctx.fillText("Экспериментальная зона", experimentPanelRect.x + 16, experimentPanelRect.y + 28);
   }
 
   const drawerRect = slideoutDrawer ? getCachedRect(slideoutDrawer, "panel-drawer") : null;
   if (drawerRect) {
-    ctx.fillStyle = "#edf7fb";
+    ctx.fillStyle = "#1f3442";
     ctx.font = "600 20px Cambria, Georgia, serif";
     ctx.fillText("Журнал и уравнения", drawerRect.x + 16, drawerRect.y + 28);
   }
@@ -3467,16 +3466,16 @@ function drawCanvasReagents() {
       rect.width,
       rect.height,
       22,
-      state.selectedReagentId === reagentId ? "rgba(14, 40, 54, 0.96)" : "rgba(10, 26, 35, 0.88)",
-      state.selectedReagentId === reagentId ? "rgba(164, 232, 255, 0.88)" : "rgba(173, 220, 236, 0.16)"
+      state.selectedReagentId === reagentId ? "rgba(231, 245, 255, 0.98)" : "rgba(255, 255, 255, 0.94)",
+      state.selectedReagentId === reagentId ? "rgba(102, 173, 210, 0.92)" : "rgba(184, 205, 220, 0.72)"
     );
 
-    ctx.fillStyle = "#edf7fb";
+    ctx.fillStyle = "#243847";
     ctx.font = "600 12px Aptos, Trebuchet MS, sans-serif";
-    wrapCanvasText(reagent.name, rect.x + 10, rect.y + 18, rect.width - 20, 13, 3);
-    ctx.fillStyle = "#86d6ff";
+    wrapCanvasText(reagent.name, rect.x + 92, rect.y + 24, rect.width - 108, 13, 3);
+    ctx.fillStyle = "#4f89ab";
     ctx.font = "11px Aptos, Trebuchet MS, sans-serif";
-    wrapCanvasText(reagent.formula, rect.x + 10, rect.y + 58, rect.width - 20, 11, 2);
+    wrapCanvasText(reagent.formula, rect.x + 92, rect.y + 56, rect.width - 108, 11, 2);
     drawCanvasBeaker(rect, reagent);
   });
 }
@@ -3488,28 +3487,28 @@ function drawCanvasTubes() {
       return;
     }
     const rect = getCachedRect(card, `tube-${tube.id}`);
-    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 22, "rgba(8, 22, 31, 0.84)", "rgba(171, 215, 230, 0.16)");
-    ctx.fillStyle = "#edf7fb";
+    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 22, "rgba(255, 255, 255, 0.94)", "rgba(183, 205, 220, 0.74)");
+    ctx.fillStyle = "#1f3442";
     ctx.font = "600 13px Aptos, Trebuchet MS, sans-serif";
     ctx.fillText(tube.label, rect.x + 16, rect.y + 24);
     drawCanvasTube(rect, tube);
-    ctx.fillStyle = "rgba(184, 208, 219, 0.95)";
+    ctx.fillStyle = "rgba(89, 110, 124, 0.92)";
     ctx.font = "11px Aptos, Trebuchet MS, sans-serif";
     wrapCanvasText(tube.analysis.contentsText, rect.x + 16, rect.y + rect.height - 54, rect.width - 32, 13, 2);
   });
 }
 
 function drawCanvasBeaker(rect, reagent) {
-  const x = rect.x + rect.width * 0.31;
-  const y = rect.y + 84;
-  const width = rect.width * 0.38;
-  const height = 64;
+  const x = rect.x + 18;
+  const y = rect.y + 18;
+  const width = 54;
+  const height = 76;
   const vividReagentColor = amplifyColor(reagent.color, 0.16, 0.08);
 
   roundedPath(x, y, width, height, 12);
-  ctx.fillStyle = "rgba(210, 236, 248, 0.12)";
+  ctx.fillStyle = "rgba(244, 249, 253, 0.9)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(236, 250, 255, 0.52)";
+  ctx.strokeStyle = "rgba(169, 191, 204, 0.78)";
   ctx.lineWidth = 2;
   ctx.stroke();
 
@@ -3537,9 +3536,9 @@ function drawCanvasTube(rect, tube) {
   const glassWidth = rect.width * 0.28;
   const glassHeight = 210;
   roundedPath(glassX, glassY, glassWidth, glassHeight, 22);
-  ctx.fillStyle = "rgba(210, 236, 248, 0.1)";
+  ctx.fillStyle = "rgba(245, 249, 252, 0.94)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(239, 248, 255, 0.6)";
+  ctx.strokeStyle = "rgba(166, 186, 200, 0.78)";
   ctx.lineWidth = 2;
   ctx.stroke();
 

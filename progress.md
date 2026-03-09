@@ -110,3 +110,17 @@ Original prompt: Сделай виртуальную лабораторию по
   - required skill-client run: `output/web-game/lab-dashboard-redesign-skill`, rerun after layout fix: `output/web-game/lab-dashboard-redesign-skill-2`;
   - DOM screenshots with real interactions: `output/web-game/dom-dashboard-initial-2.png`, `output/web-game/dom-dashboard-reaction-2.png`;
   - DOM/browser interaction check confirmed `AgNO3 + KI` still produces the yellow `AgI` precipitate and the journal tab updates correctly.
+
+- Light lab theme / layout stabilization pass:
+  - shifted the page background closer to white, reduced the decorative overlay/grid intensity, and kept only a soft lab texture so the screen reads as a clean educational interface instead of a dark atmospheric scene;
+  - compressed the hero block and slightly reduced desktop panel heights so the central experiment bench stays visible earlier on desktop screens;
+  - kept the reagent library as a single-column internal-scroll list and revalidated that `#reagent-grid` scrolls inside the panel instead of stretching the whole page;
+  - preserved reaction mechanics and drawer behavior; this pass only adjusted presentation and spatial balance.
+- Verification after light-theme stabilization:
+  - `node --check app.js` -> ok;
+  - `npm run build` -> ok;
+  - required skill-client reruns: `output/web-game/light-lab-fix-skill`, `output/web-game/light-lab-fix-skill-2`, final cleanup check `output/web-game/light-lab-fix-skill-3`;
+  - DOM screenshots and metrics: `output/web-game/light-lab-dom-check`, `output/web-game/light-lab-dom-check-2`;
+  - `light-lab-dom-check-2/report.json` confirms `#reagent-grid` remains internally scrollable on `1600x1200` and `1280x720`;
+  - `AgNO3 + KI` regression check still shows the yellow `AgI` precipitate and the journal entry in the right drawer;
+  - interaction regression (`click`, pointer-event `drag-and-drop`, tube clear, reset-all, drawer tabs): `output/web-game/light-lab-interactions-3/report.json`, screenshot `output/web-game/light-lab-interactions-3/interaction-check.png`.

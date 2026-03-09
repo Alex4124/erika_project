@@ -14,11 +14,10 @@
       <main class="lab-stage">
         <header class="hero-panel">
           <div class="hero-copy">
-            <p class="eyebrow">Chemistry Lab Dashboard</p>
-            <h1>Современная учебная лаборатория для наблюдения химических реакций</h1>
+            <p class="eyebrow">Virtual Chemistry Lab</p>
+            <h1>Светлая учебная химическая лаборатория</h1>
             <p class="hero-description">
-              Смешивайте растворы, отслеживайте визуальные признаки реакций и сразу сравнивайте наблюдения с журналом и
-              уравнениями.
+              Смешивайте растворы, наблюдайте признаки реакций и сразу сверяйтесь с журналом наблюдений и уравнениями.
             </p>
           </div>
 
@@ -26,13 +25,13 @@
             <article class="hero-metric">
               <p class="metric-label">Режим работы</p>
               <strong>Перетаскивание и точечное добавление</strong>
-              <span>Стакан можно перенести в пробирку или выбрать кликом.</span>
+              <span>Стакан можно перенести в пробирку или выбрать кликом, затем добавить в нужную пробирку.</span>
             </article>
 
             <article class="hero-metric hero-metric-selected">
               <p class="metric-label">Выбранный реагент</p>
               <strong id="selected-reagent">Ничего не выбрано</strong>
-              <span>Активный реагент подсвечивается и готов к добавлению.</span>
+              <span>Активный реагент подсвечивается и готов к добавлению в экспериментальную зону.</span>
             </article>
 
             <button id="reset-all-btn" class="primary-button hero-reset" type="button">Очистить все пробирки</button>
@@ -45,8 +44,8 @@
               <p class="panel-kicker">Reagent Library</p>
               <div class="panel-header">
                 <div>
-                  <h2>Левая панель реагентов</h2>
-                  <p>Чистые карточки с формулой, цветом раствора и быстрым доступом к справке по веществу.</p>
+                  <h2>Панель реагентов</h2>
+                  <p>Компактный каталог растворов и индикаторов. Наведите курсор для справки или добавьте реагент в опыт.</p>
                 </div>
               </div>
             </div>
@@ -60,12 +59,12 @@
           </aside>
 
           <section class="experiment-panel">
-            <div class="panel-chrome panel-chrome-wide">
+            <div class="panel-chrome">
               <p class="panel-kicker">Experiment Bench</p>
               <div class="panel-header">
                 <div>
-                  <h2>Центральная экспериментальная зона</h2>
-                  <p>Крупные пробирки и стеклянные поверхности помогают легче считывать признаки реакции.</p>
+                  <h2>Экспериментальная зона</h2>
+                  <p>Крупные пробирки и светлая стеклянная сцена помогают быстрее считывать цвет, осадок, газ и нагрев.</p>
                 </div>
               </div>
             </div>
@@ -73,17 +72,12 @@
             <div class="status-strip">
               <article class="status-card status-card-highlight">
                 <p class="status-title">Как работать</p>
-                <p class="status-value">Перетащите стакан в пробирку или выберите реагент и затем нажмите на нужную пробирку.</p>
+                <p class="status-value">Выберите реагент в каталоге или перетащите карточку прямо в пробирку.</p>
               </article>
 
               <article class="status-card">
-                <p class="status-title">Что отслеживать</p>
-                <p class="status-value">Изменение цвета, выпадение осадка, газ, нагрев и другие визуальные эффекты.</p>
-              </article>
-
-              <article class="status-card">
-                <p class="status-title">Правая консоль</p>
-                <p class="status-value">Журнал наблюдений и уравнения реакций всегда доступны в соседней панели.</p>
+                <p class="status-title">Что наблюдать</p>
+                <p class="status-value">Изменение цвета, осадки, пузырьки газа, тепловые и окислительно-восстановительные эффекты.</p>
               </article>
             </div>
 
@@ -93,7 +87,7 @@
                   <p class="experiment-kicker">Reaction Rack</p>
                   <h3>Штатив с пробирками</h3>
                 </div>
-                <p class="experiment-zone-copy">Визуальные эффекты синхронизированы с текущим составом каждой пробирки.</p>
+                <p class="experiment-zone-copy">Правая панель показывает журнал и уравнения для текущих реакций.</p>
               </div>
 
               <div id="tube-rack" class="tube-rack" aria-label="Штатив с пробирками"></div>
@@ -144,8 +138,7 @@
                   aria-labelledby="drawer-tab-equations"
                 >
                   <p class="slideout-description">
-                    Показываются молекулярные и ионные уравнения для реакций, которые сейчас зафиксированы в каждой
-                    пробирке.
+                    Здесь показываются молекулярные и ионные уравнения реакций, которые уже определены для каждой пробирки.
                   </p>
                   <div id="equation-feed" class="equation-feed"></div>
                 </section>
@@ -159,8 +152,7 @@
                   hidden
                 >
                   <p class="slideout-description">
-                    Журнал фиксирует добавление реагентов, выпадение осадков, изменение цвета и другие наблюдения по ходу
-                    опыта.
+                    Журнал фиксирует добавление реагентов, появление осадков, изменение цвета и другие наблюдения по ходу опыта.
                   </p>
                   <div id="event-feed" class="event-feed event-feed-drawer"></div>
                 </section>

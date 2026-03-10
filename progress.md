@@ -124,3 +124,16 @@ Original prompt: Сделай виртуальную лабораторию по
   - `light-lab-dom-check-2/report.json` confirms `#reagent-grid` remains internally scrollable on `1600x1200` and `1280x720`;
   - `AgNO3 + KI` regression check still shows the yellow `AgI` precipitate and the journal entry in the right drawer;
   - interaction regression (`click`, pointer-event `drag-and-drop`, tube clear, reset-all, drawer tabs): `output/web-game/light-lab-interactions-3/report.json`, screenshot `output/web-game/light-lab-interactions-3/interaction-check.png`.
+
+- Dark lab pass: tubes, reagent tooltips, and global palette
+  - switched the dashboard back to a dark laboratory palette with colder blue accents and darker glass panels, because the white variant reduced the intended lab atmosphere;
+  - rebuilt the rack tube visuals with darker stage backplates, more realistic stand hardware, and higher-contrast glass so the tubes read as actual lab objects instead of flat light cards;
+  - replaced in-card reagent tooltips with a body-level overlay so the reference panel no longer clips, overlaps neighboring cards, or exits the viewport near the bottom of the reagent list;
+  - updated DOM copy and the canvas mirror title from the old "light lab" wording to the new neutral modern-lab wording.
+- Verification after dark lab pass:
+  - `node --check app.js` -> ok;
+  - `npm run build` -> ok;
+  - required skill-client reruns: `output/web-game/dark-lab-fix-skill`, `output/web-game/dark-lab-fix-skill-2`;
+  - DOM screenshots: `output/web-game/dark-lab-dom-check-2/desktop-1600-initial.png`, `output/web-game/dark-lab-dom-check-2/tooltip-top.png`, `output/web-game/dark-lab-dom-check-2/tooltip-bottom.png`, `output/web-game/dark-lab-dom-check-2/desktop-1600-reaction.png`, `output/web-game/dark-lab-dom-check-2/desktop-1280-initial.png`;
+  - `dark-lab-dom-check-2/report.json` confirms both top and bottom reagent tooltips stay within the viewport, `#reagent-grid` still scrolls internally on `1280x720`, and `AgNO3 + KI` still produces the yellow `AgI` precipitate;
+  - interaction regression after the tooltip rewrite still passes for click-add, pointer-event drag-and-drop, tube clear, reset-all, and drawer tab switching.

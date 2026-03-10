@@ -573,6 +573,9 @@ const scenePanels = Array.from(document.querySelectorAll(".hero-panel, .reagent-
 const heroPanel = document.querySelector(".hero-panel");
 const reagentPanel = document.querySelector(".reagent-panel");
 const experimentPanel = document.querySelector(".experiment-panel");
+const reagentTooltipOverlay = document.createElement("div");
+reagentTooltipOverlay.className = "reagent-tooltip-overlay";
+reagentTooltipOverlay.setAttribute("aria-hidden", "true");
 
 const tubeElements = new Map();
 const tubeRenderElements = new Map();
@@ -591,6 +594,7 @@ const state = {
     open: true,
     panel: "equations"
   },
+  activeTooltipCard: null,
   dragging: null,
   tubes: Array.from({ length: 4 }, (_, index) => createTube(index + 1)),
   clockMs: 0,
@@ -2058,9 +2062,11 @@ function init() {
   buildTubeRack();
   updateSelectedReagentLabel();
   renderDrawer();
+  document.body.append(reagentTooltipOverlay);
   postEvent("Стаканы готовы к работе. Перетащите реагент в пробирку, чтобы начать опыт.");
   renderSceneBackground();
   window.addEventListener("resize", handleResize);
+  document.addEventListener("scroll", syncVisibleTooltips, true);
   window.addEventListener("keydown", handleKeydown);
   drawerTabs.forEach((tab) => {
     tab.addEventListener("click", () => toggleDrawer(tab.dataset.drawerTab));
@@ -2328,45 +2334,108 @@ function getReagentTooltipMarkup(reagent, tooltipId) {
   `;
 }
 
+function ensureReagentTooltipOverlay() {
+  if (!reagentTooltipOverlay.isConnected) {
+    document.body.append(reagentTooltipOverlay);
+  }
+  return reagentTooltipOverlay;
+}
+
 function showReagentTooltip(card) {
-  positionReagentTooltip(card);
+  const tooltipSource = card.querySelector(".reagent-tooltip");
+  if (!tooltipSource) {
+    return;
+  }
+  const overlay = ensureReagentTooltipOverlay();
+  if (state.activeTooltipCard !== card) {
+    overlay.innerHTML = tooltipSource.innerHTML;
+  }
+  state.activeTooltipCard?.classList.remove("is-peeking");
+  state.activeTooltipCard = card;
   card.classList.add("is-peeking");
+  positionReagentTooltip(card);
+  overlay.classList.add("is-visible");
+  overlay.setAttribute("aria-hidden", "false");
 }
 
 function hideReagentTooltip(card) {
-  card.classList.remove("is-peeking");
+  if (card && state.activeTooltipCard && state.activeTooltipCard !== card) {
+    return;
+  }
+  state.activeTooltipCard?.classList.remove("is-peeking");
+  state.activeTooltipCard = null;
+  reagentTooltipOverlay.classList.remove("is-visible");
+  reagentTooltipOverlay.removeAttribute("data-placement");
+  reagentTooltipOverlay.setAttribute("aria-hidden", "true");
+}
+
+function syncVisibleTooltips() {
+  if (state.activeTooltipCard) {
+    positionReagentTooltip(state.activeTooltipCard);
+  }
 }
 
 function positionReagentTooltip(card) {
-  const tooltip = card.querySelector(".reagent-tooltip");
-  if (!tooltip) {
+  const tooltipSource = card.querySelector(".reagent-tooltip");
+  if (!tooltipSource) {
     return;
   }
+  const overlay = ensureReagentTooltipOverlay();
+  if (overlay.innerHTML !== tooltipSource.innerHTML) {
+    overlay.innerHTML = tooltipSource.innerHTML;
+  }
+
   const rect = card.getBoundingClientRect();
-  const tooltipWidth = tooltip.offsetWidth || 280;
-  const tooltipHeight = tooltip.offsetHeight || 170;
-  const gap = 14;
+  if (rect.bottom < 0 || rect.top > window.innerHeight || rect.right < 0 || rect.left > window.innerWidth) {
+    hideReagentTooltip(card);
+    return;
+  }
+
+  const viewportPadding = 16;
+  const tooltipWidth = Math.min(320, overlay.offsetWidth || 304, window.innerWidth - viewportPadding * 2);
+  const tooltipHeight = Math.min(
+    Math.max(overlay.offsetHeight || 184, 164),
+    window.innerHeight - viewportPadding * 2
+  );
+  const gap = 16;
   const spaces = {
-    top: rect.top,
-    right: window.innerWidth - rect.right,
-    bottom: window.innerHeight - rect.bottom,
-    left: rect.left
+    top: rect.top - viewportPadding,
+    right: window.innerWidth - rect.right - viewportPadding,
+    bottom: window.innerHeight - rect.bottom - viewportPadding,
+    left: rect.left - viewportPadding
   };
 
-  let placement = "bottom";
-  if (spaces.bottom >= tooltipHeight + gap) {
-    placement = "bottom";
-  } else if (spaces.top >= tooltipHeight + gap) {
-    placement = "top";
-  } else if (spaces.right >= tooltipWidth + gap) {
+  let placement = "right";
+  if (spaces.right >= tooltipWidth + gap) {
     placement = "right";
   } else if (spaces.left >= tooltipWidth + gap) {
     placement = "left";
+  } else if (spaces.bottom >= tooltipHeight + gap) {
+    placement = "bottom";
   } else {
     placement = spaces.bottom >= spaces.top ? "bottom" : "top";
   }
 
+  let left = rect.right + gap;
+  let top = rect.top + rect.height / 2 - tooltipHeight / 2;
+
+  if (placement === "left") {
+    left = rect.left - tooltipWidth - gap;
+  } else if (placement === "bottom") {
+    left = rect.left + rect.width / 2 - tooltipWidth / 2;
+    top = rect.bottom + gap;
+  } else if (placement === "top") {
+    left = rect.left + rect.width / 2 - tooltipWidth / 2;
+    top = rect.top - tooltipHeight - gap;
+  }
+
+  left = clamp(left, viewportPadding, window.innerWidth - tooltipWidth - viewportPadding);
+  top = clamp(top, viewportPadding, window.innerHeight - tooltipHeight - viewportPadding);
+
   card.dataset.tooltipPlacement = placement;
+  overlay.dataset.placement = placement;
+  overlay.style.setProperty("--tooltip-left", `${Math.round(left)}px`);
+  overlay.style.setProperty("--tooltip-top", `${Math.round(top)}px`);
 }
 
 function toggleSelectedReagent(reagentId) {
@@ -3340,6 +3409,7 @@ function frame(timestamp) {
 
 function handleResize() {
   resetGeometryCache();
+  syncVisibleTooltips();
   render();
 }
 
@@ -3371,20 +3441,20 @@ function drawCanvasBackground() {
   ctx.clearRect(0, 0, width, height);
 
   const gradient = ctx.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, "#fcfdff");
-  gradient.addColorStop(0.48, "#f4f7fb");
-  gradient.addColorStop(1, "#edf2f7");
+  gradient.addColorStop(0, "#07111a");
+  gradient.addColorStop(0.48, "#0b1620");
+  gradient.addColorStop(1, "#0d1822");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.fillStyle = "rgba(121, 182, 217, 0.08)";
+  ctx.fillStyle = "rgba(116, 181, 219, 0.08)";
   for (let index = 0; index < 10; index += 1) {
     ctx.beginPath();
     ctx.arc(width * 0.88, height * 0.14, 140 + index * 34, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  ctx.fillStyle = "rgba(219, 228, 238, 0.82)";
+  ctx.fillStyle = "rgba(13, 24, 34, 0.92)";
   ctx.fillRect(0, height - height * 0.22, width, height * 0.22);
   drawShelf(width, height * 0.3, height * 0.02);
   drawShelf(width, height * 0.64, height * 0.024);
@@ -3410,47 +3480,47 @@ function drawCanvasScene() {
 
 function drawShelf(width, y, thickness) {
   const shelfGradient = ctx.createLinearGradient(0, y, 0, y + thickness);
-  shelfGradient.addColorStop(0, "rgba(218, 225, 233, 0.92)");
-  shelfGradient.addColorStop(1, "rgba(201, 210, 219, 0.96)");
+  shelfGradient.addColorStop(0, "rgba(71, 93, 109, 0.9)");
+  shelfGradient.addColorStop(1, "rgba(24, 39, 50, 0.96)");
   ctx.fillStyle = shelfGradient;
   ctx.fillRect(0, y, width, thickness);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+  ctx.fillStyle = "rgba(199, 228, 245, 0.18)";
   ctx.fillRect(0, y, width, Math.max(2, thickness * 0.12));
 }
 
 function drawCanvasPanels() {
   scenePanels.forEach((panel, index) => {
     const rect = getCachedRect(panel, `panel-${index}`);
-    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 26, "rgba(255, 255, 255, 0.94)", "rgba(183, 205, 220, 0.72)");
+    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 26, "rgba(10, 19, 28, 0.92)", "rgba(54, 84, 104, 0.78)");
   });
 
   const hero = heroPanel ? getCachedRect(heroPanel, "panel-hero") : null;
   if (hero) {
-    ctx.fillStyle = "#4e8db0";
+    ctx.fillStyle = "#79b7dc";
     ctx.font = "12px Aptos, Trebuchet MS, sans-serif";
     ctx.fillText("Виртуальная лаборатория", hero.x + 18, hero.y + 24);
-    ctx.fillStyle = "#1f3442";
+    ctx.fillStyle = "#e4eef4";
     ctx.font = "600 26px Cambria, Georgia, serif";
-    wrapCanvasText("Светлая учебная химическая лаборатория", hero.x + 18, hero.y + 56, hero.width - 230, 28, 2);
+    wrapCanvasText("Современная учебная химическая лаборатория", hero.x + 18, hero.y + 56, hero.width - 230, 28, 2);
   }
 
   const reagentPanelRect = reagentPanel ? getCachedRect(reagentPanel, "panel-reagents") : null;
   if (reagentPanelRect) {
-    ctx.fillStyle = "#1f3442";
+    ctx.fillStyle = "#e4eef4";
     ctx.font = "600 20px Cambria, Georgia, serif";
     ctx.fillText("Панель реагентов", reagentPanelRect.x + 16, reagentPanelRect.y + 28);
   }
 
   const experimentPanelRect = experimentPanel ? getCachedRect(experimentPanel, "panel-experiment") : null;
   if (experimentPanelRect) {
-    ctx.fillStyle = "#1f3442";
+    ctx.fillStyle = "#e4eef4";
     ctx.font = "600 20px Cambria, Georgia, serif";
     ctx.fillText("Экспериментальная зона", experimentPanelRect.x + 16, experimentPanelRect.y + 28);
   }
 
   const drawerRect = slideoutDrawer ? getCachedRect(slideoutDrawer, "panel-drawer") : null;
   if (drawerRect) {
-    ctx.fillStyle = "#1f3442";
+    ctx.fillStyle = "#e4eef4";
     ctx.font = "600 20px Cambria, Georgia, serif";
     ctx.fillText("Журнал и уравнения", drawerRect.x + 16, drawerRect.y + 28);
   }
@@ -3466,14 +3536,14 @@ function drawCanvasReagents() {
       rect.width,
       rect.height,
       22,
-      state.selectedReagentId === reagentId ? "rgba(231, 245, 255, 0.98)" : "rgba(255, 255, 255, 0.94)",
-      state.selectedReagentId === reagentId ? "rgba(102, 173, 210, 0.92)" : "rgba(184, 205, 220, 0.72)"
+      state.selectedReagentId === reagentId ? "rgba(18, 41, 56, 0.98)" : "rgba(10, 20, 29, 0.94)",
+      state.selectedReagentId === reagentId ? "rgba(116, 181, 219, 0.92)" : "rgba(58, 88, 108, 0.72)"
     );
 
-    ctx.fillStyle = "#243847";
+    ctx.fillStyle = "#e3eef4";
     ctx.font = "600 12px Aptos, Trebuchet MS, sans-serif";
     wrapCanvasText(reagent.name, rect.x + 92, rect.y + 24, rect.width - 108, 13, 3);
-    ctx.fillStyle = "#4f89ab";
+    ctx.fillStyle = "#79b7dc";
     ctx.font = "11px Aptos, Trebuchet MS, sans-serif";
     wrapCanvasText(reagent.formula, rect.x + 92, rect.y + 56, rect.width - 108, 11, 2);
     drawCanvasBeaker(rect, reagent);
@@ -3487,12 +3557,12 @@ function drawCanvasTubes() {
       return;
     }
     const rect = getCachedRect(card, `tube-${tube.id}`);
-    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 22, "rgba(255, 255, 255, 0.94)", "rgba(183, 205, 220, 0.74)");
-    ctx.fillStyle = "#1f3442";
+    drawRoundedRect(rect.x, rect.y, rect.width, rect.height, 22, "rgba(10, 19, 28, 0.94)", "rgba(57, 86, 106, 0.78)");
+    ctx.fillStyle = "#e3eef4";
     ctx.font = "600 13px Aptos, Trebuchet MS, sans-serif";
     ctx.fillText(tube.label, rect.x + 16, rect.y + 24);
     drawCanvasTube(rect, tube);
-    ctx.fillStyle = "rgba(89, 110, 124, 0.92)";
+    ctx.fillStyle = "rgba(166, 187, 201, 0.92)";
     ctx.font = "11px Aptos, Trebuchet MS, sans-serif";
     wrapCanvasText(tube.analysis.contentsText, rect.x + 16, rect.y + rect.height - 54, rect.width - 32, 13, 2);
   });
@@ -3506,9 +3576,9 @@ function drawCanvasBeaker(rect, reagent) {
   const vividReagentColor = amplifyColor(reagent.color, 0.16, 0.08);
 
   roundedPath(x, y, width, height, 12);
-  ctx.fillStyle = "rgba(244, 249, 253, 0.9)";
+  ctx.fillStyle = "rgba(24, 41, 54, 0.84)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(169, 191, 204, 0.78)";
+  ctx.strokeStyle = "rgba(108, 145, 169, 0.7)";
   ctx.lineWidth = 2;
   ctx.stroke();
 
@@ -3536,9 +3606,9 @@ function drawCanvasTube(rect, tube) {
   const glassWidth = rect.width * 0.28;
   const glassHeight = 210;
   roundedPath(glassX, glassY, glassWidth, glassHeight, 22);
-  ctx.fillStyle = "rgba(245, 249, 252, 0.94)";
+  ctx.fillStyle = "rgba(19, 35, 46, 0.76)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(166, 186, 200, 0.78)";
+  ctx.strokeStyle = "rgba(112, 150, 174, 0.72)";
   ctx.lineWidth = 2;
   ctx.stroke();
 
